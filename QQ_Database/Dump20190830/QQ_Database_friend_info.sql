@@ -16,27 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `password_protect`
+-- Table structure for table `friend_info`
 --
 
-DROP TABLE IF EXISTS `password_protect`;
+DROP TABLE IF EXISTS `friend_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `password_protect` (
-  `userid` int(11) NOT NULL,
-  `password_protect_question` varchar(60) NOT NULL,
-  `password_protect_answer` varchar(60) NOT NULL,
-  PRIMARY KEY (`userid`)
+CREATE TABLE `friend_info` (
+  `friend_id` int(5) NOT NULL,
+  `userid` int(5) NOT NULL,
+  PRIMARY KEY (`friend_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `password_protect`
+-- Dumping data for table `friend_info`
 --
 
-LOCK TABLES `password_protect` WRITE;
-/*!40000 ALTER TABLE `password_protect` DISABLE KEYS */;
-/*!40000 ALTER TABLE `password_protect` ENABLE KEYS */;
+LOCK TABLES `friend_info` WRITE;
+/*!40000 ALTER TABLE `friend_info` DISABLE KEYS */;
+/*!40000 ALTER TABLE `friend_info` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-29 19:48:47
+-- Dump completed on 2019-08-30 15:52:41

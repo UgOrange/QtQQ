@@ -1,6 +1,7 @@
 #ifndef EPOLL_H_INCLUDED
 #define EPOLL_H_INCLUDED
 #include <iostream>
+#include <sstream>
 #include <list>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,15 +18,120 @@
 using namespace std;
 list<int> clients_list;
 #define serverIP "10.194.144.33"
-#define serverPort 8889
+#define serverPort 8892
 #define epollSize 1000
 #define buffSize 0xFFFF
 SqlServer database;
+
+#include <time.h>
+ 
+#define STR_LEN 16//定义随机输出的字符串长度。
+char *GenerateStr()
+{
+    char str[STR_LEN + 1] = {0};
+    int i,flag;
+     
+    srand(time(NULL));//通过时间函数设置随机数种子，使得每次运行结果随机。
+    for(i = 0; i < STR_LEN; i ++)
+    {
+		flag = rand()%3;
+		switch(flag)
+		{
+		case 0:
+			str[i] = rand()%26 + 'a'; 
+			break;
+		case 1:
+			str[i] = rand()%26 + 'A'; 
+			break;
+		case 2:
+			str[i] = rand()%10 + '0'; 
+			break;
+		}
+    }
+    printf("%s\n", str);//输出生成的随机数。
+     
+    return str;
+}
+bool checktoken(char uid[1024],char token[1024])
+{
+    ostringstream ostr;
+    ostr<<"SELECT token FROM user WHERE userid ='"<<uid<<"'";
+    string sql =ostr.str();
+    string token1=database.query(sql);
+    if(token==token1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 void reg(int clientFd,char message[buffSize])
 {
-    string uName,passWd,nickName,iconId,signature,secureId,secureAnswer;
-    sscanf(message,"%s|%s|%s|%s|%s|%s|%s",uName,passWd,nickName,iconId,signature,secureId,secureAnswer);
-    cout<<uName<<passWd<<nickName<<iconId<<signature<<secureId<<secureAnswer<<endl;
+    char result[buffSize];
+    char uName[1024]={"0"},passWd[1024]={"0"},nickName[1024]={"0"},iconId[1024]={"0"},signature[1024]={"0"},secureId[1024]={"0"},secureAnswer[1024]={"0"};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",uName,passWd,nickName,iconId,signature,secureId,secureAnswer);
+    cout<<uName<<" "<<passWd<<" "<<nickName<<" "<<iconId<<" "<<signature<<" "<<secureId<<" "<<secureAnswer<<endl;
+    string sql=sprintf("INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES ('%s','%s','%s','%s','%s','%s,'%s')",uName,passWd,nickName,iconId,signature,secureId,secureAnswer);
+    if(database.query_str(sql))
+    {
+        strcpy(result,"register_succ|注册成功！");
+    }
+    else
+    {
+        string sql=sprintf("SELECT * FROM user WHERE user_name = '%s'",uName);
+        string ret=database.query(sql);
+        if(ret!="NULL")
+        strcpy(result,"register_error|用户名被占用！");
+        else
+        strcpy(result,"register_error|注册失败！");
+    }
+    send(clientFd,&result,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void login(int clientFd,char message[buffSize])
+{
+    char result[buffSize];
+    char uName[1024],passWd[1024],token[1024];
+    bzero(result,buffSize);
+    bzero(uName,1024);
+    bzero(passWd,1024);
+    bzero(token,1024);
+    sscanf(message,"%[^|]|%s",uName,passWd);
+    string sql=sprintf("SELECT password FROM user WHERE user_name = '%s'",uName);
+    string ret=database.query(sql);
+    if(ret==passWd)
+    {
+        string sql1=sprintf("SELECT userid FROM user WHERE user_name ='%s'",uName);
+        string uid=database.query(sql1);
+        token=GenerateStr();
+        string sql2=sprintf("UPDATE user SET token = '%s' , online_status = 1 WHERE userid ='%s'",token,uid);
+        bool a=database.query_str(str2);
+        if(a)
+        {
+            result=sprintf("login_succ|%s|%s",uid,token);
+        }
+        else{
+             strcpy(result,"login_error|登录失败！");
+        }
+    }
+    else{
+        strcpy(result,"login_error|用户名或密码错误！");
+    }
+    send(clientFd,&result,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void updateProfile(int clientFd,char message[buffSize])
+{
+    char result[buffSize];
+    char uid[1024]={"0"},token[1024]={"0"},nickName[1024]={"0"},iconId[1024]={"0"},signature[1024]={"0"},secureId[1024]={"0"},secureAnswer[1024]={"0"};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",uid,token,nickName,iconId,signature,secureId,secureAnswer);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+
+    }
 }
 int setNonBlock(int sockfd)//设置非阻塞函数模块
 {

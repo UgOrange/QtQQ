@@ -16,26 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `friend_info`
+-- Table structure for table `friend_apply`
 --
 
-DROP TABLE IF EXISTS `friend_info`;
+DROP TABLE IF EXISTS `friend_apply`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `friend_info` (
-  `friend_id` int(5) NOT NULL,
-  `userid` int(5) NOT NULL,
-  PRIMARY KEY (`friend_id`)
+CREATE TABLE `friend_apply` (
+  `object_id` int(5) NOT NULL,
+  `applicant_id` int(5) NOT NULL,
+  PRIMARY KEY (`object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `friend_info`
+-- Dumping data for table `friend_apply`
 --
 
-LOCK TABLES `friend_info` WRITE;
-/*!40000 ALTER TABLE `friend_info` DISABLE KEYS */;
-/*!40000 ALTER TABLE `friend_info` ENABLE KEYS */;
+LOCK TABLES `friend_apply` WRITE;
+/*!40000 ALTER TABLE `friend_apply` DISABLE KEYS */;
+INSERT INTO `friend_apply` VALUES (12,5),(13,5);
+/*!40000 ALTER TABLE `friend_apply` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -47,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-29 19:48:47
+-- Dump completed on 2019-08-30 15:52:41

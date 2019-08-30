@@ -16,31 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user`
+-- Table structure for table `single_chat_history`
 --
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `single_chat_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user` (
-  `userid` int(5) unsigned zerofill NOT NULL,
-  `user_name` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
-  `nickname` varchar(45) DEFAULT NULL,
-  `signature` varchar(60) DEFAULT NULL,
-  `online_status` tinyint(1) NOT NULL,
-  `head_portrait_id` int(5) DEFAULT NULL,
-  PRIMARY KEY (`userid`)
+CREATE TABLE `single_chat_history` (
+  `chat_info_id` int(11) NOT NULL,
+  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `poster_id` int(5) unsigned zerofill NOT NULL,
+  `content` varchar(200) NOT NULL,
+  PRIMARY KEY (`chat_info_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `single_chat_history`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+LOCK TABLES `single_chat_history` WRITE;
+/*!40000 ALTER TABLE `single_chat_history` DISABLE KEYS */;
+/*!40000 ALTER TABLE `single_chat_history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -52,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-29 19:48:47
+-- Dump completed on 2019-08-30 15:52:41

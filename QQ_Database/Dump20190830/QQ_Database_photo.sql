@@ -16,26 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `group_chat_info`
+-- Table structure for table `photo`
 --
 
-DROP TABLE IF EXISTS `group_chat_info`;
+DROP TABLE IF EXISTS `photo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `group_chat_info` (
-  `group_chat_info_id` int(11) NOT NULL,
-  `member_id` int(5) NOT NULL,
-  PRIMARY KEY (`group_chat_info_id`)
+CREATE TABLE `photo` (
+  `photo_id` int(5) NOT NULL,
+  `photo_content` blob NOT NULL,
+  PRIMARY KEY (`photo_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `group_chat_info`
+-- Dumping data for table `photo`
 --
 
-LOCK TABLES `group_chat_info` WRITE;
-/*!40000 ALTER TABLE `group_chat_info` DISABLE KEYS */;
-/*!40000 ALTER TABLE `group_chat_info` ENABLE KEYS */;
+LOCK TABLES `photo` WRITE;
+/*!40000 ALTER TABLE `photo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `photo` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -47,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-29 19:48:47
+-- Dump completed on 2019-08-30 15:52:41

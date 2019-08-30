@@ -81,7 +81,7 @@ string SqlServer::queryFriend(string sql)
 }
 string SqlServer::query(string sql)
 {
-    string temp = "error";
+    string temp = "NULL";
    // cout<<"line44 sql.data "<<sql.data()<<endl;;
     //传入sql语句，将查询结果以char×返回
     if(!mysql_query(connect,sql.data()))
