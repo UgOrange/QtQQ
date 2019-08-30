@@ -1,4 +1,6 @@
 #include "epoll.h"
+#include <mysql/mysql.h>
+
 int main()
 {
     struct sockaddr_in serverAddr;
