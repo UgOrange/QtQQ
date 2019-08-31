@@ -4,7 +4,7 @@
 #include <sstream>
 #include <list>
 #include <sys/types.h>
-#include <sys/socket.h >
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/epoll.h>
@@ -34,19 +34,19 @@ char *GenerateStr()
     srand(time(NULL));//通过时间函数设置随机数种子，使得每次运行结果随机。
     for(i = 0; i < STR_LEN; i ++)
     {
-		flag = rand()%3;
-		switch(flag)
-		{
-		case 0:
-			str[i] = rand()%26 + 'a'; 
-			break;
-		case 1:
-			str[i] = rand()%26 + 'A'; 
-			break;
-		case 2:
-			str[i] = rand()%10 + '0'; 
-			break;
-		}
+        flag = rand()%3;
+        switch(flag)
+        {
+        case 0:
+            str[i] = rand()%26 + 'a'; 
+            break;
+        case 1:
+            str[i] = rand()%26 + 'A'; 
+            break;
+        case 2:
+            str[i] = rand()%10 + '0'; 
+            break;
+        }
     }
     printf("%s\n", str);//输出生成的随机数。
      
@@ -73,19 +73,14 @@ void reg(int clientFd,char message[buffSize])
     char uName[1024]={"0"},passWd[1024]={"0"},nickName[1024]={"0"},iconId[1024]={"0"},signature[1024]={"0"},secureId[1024]={"0"},secureAnswer[1024]={"0"};
     sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",uName,passWd,nickName,iconId,signature,secureId,secureAnswer);
     cout<<uName<<" "<<passWd<<" "<<nickName<<" "<<iconId<<" "<<signature<<" "<<secureId<<" "<<secureAnswer<<endl;
-    ostringstream ostr;
-    
-    ostr<<"INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES ('"<<uName<<"'"<<passWd<<"'"<<nickName<<"'"<<iconId<<"'"<<signature<<"'"<<secureId<<"'"<<secureAnswer<<"')";
-    string sql=ostr.str();
+    string sql=sprintf("INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES ('%s','%s','%s','%s','%s','%s,'%s')",uName,passWd,nickName,iconId,signature,secureId,secureAnswer);
     if(database.query_str(sql))
     {
         strcpy(result,"register_succ|注册成功！");
     }
     else
     {
-        ostringstream ostr1;
-        ostr1<<"SELECT * FROM user WHERE user_name = '"<<uName<<"')";
-        string sql=ostr1.str();
+        string sql=sprintf("SELECT * FROM user WHERE user_name = '%s'",uName);
         string ret=database.query(sql);
         if(ret!="NULL")
         strcpy(result,"register_error|用户名被占用！");
@@ -104,20 +99,14 @@ void login(int clientFd,char message[buffSize])
     bzero(passWd,1024);
     bzero(token,1024);
     sscanf(message,"%[^|]|%s",uName,passWd);
-    ostringstream ostr;
-    ostr<<"SELECT password FROM user WHERE user_name = '"<<uName<<"')";
-    string sql=ostr.str();
+    string sql=sprintf("SELECT password FROM user WHERE user_name = '%s'",uName);
     string ret=database.query(sql);
     if(ret==passWd)
     {
-        ostringstream ostr1;
-        ostr1<<"SELECT userid FROM user WHERE user_name ='"<<uName<<"')";
-        string sql1=ostr1.str();
+        string sql1=sprintf("SELECT userid FROM user WHERE user_name ='%s'",uName);
         string uid=database.query(sql1);
         token=GenerateStr();
-        ostringstream ostr2;
-        ostr2<<"UPDATE user SET token = '"<<token<<"' , online_status = 1 WHERE userid ='"<<uid<<"'";
-        string sql2=ostr2.str();
+        string sql2=sprintf("UPDATE user SET token = '%s' , online_status = 1 WHERE userid ='%s'",token,uid);
         bool a=database.query_str(str2);
         if(a)
         {
@@ -141,24 +130,47 @@ void updateProfile(int clientFd,char message[buffSize])
     bool a =checktoken(uid,token);
     if(a)
     {
-        ostringstream ostr;
-        ostr<<"UPDATE user SET nickname = '"<<nickName<<"', signature = '"<<signature<<"', head_portrait_id = '"<<iconid<<"', password_protect_id = '"<<secureId<<"', answer ='"<<answer<<"' WHERE userid = '"<<uid<<"'";
-        string sql=ostr.str();
-        bool a=database.query_str(str2);
-        if(a)
-        {
-            strcpy(result,"update_profile_succ|修改成功！");
-        }
-        else{
-            strcpy(result,"update_profile_error|修改失败！");
-        }
+
     }
-    else{
-        strcpy(result,"update_profile_error|token错误，请重新登录！");
-    }
-    send(clientFd,&result,sizeof(result),0);
-    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
+
+
+
+void LoadFriend(int clientFd,char message[buffSize])
+{
+    
+
+    char result[buffSize]={0};
+    int result1=0;
+    char result1_char[buffSize];
+    MYSQL_ROW row;
+    MYSQL mysql;
+    MYSQL_RES *result_sql;
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a = checktoken(uid,token);
+    if(a)
+    {
+        string sql1 = sprintf("SELECT COUNT(friend_id) FROM friend_info WHERE userid = '%s'",uid);
+        result1=database.query_str(sql1);
+        itoa(result1,result1_char,10);
+        if(result1_char[0]=='0'){
+            strcpy(result,"get_user_friend|您暂时没有好友！");
+            return;
+        }
+        string sql2 = sprintf("SELECT friend_id FROM friend_info WHERE userid = '%s'",uid);
+        mysql_query(&mysql,sql2);
+        result_sql = mysql_store_result(&mysql);
+        while(row = mysql_fetch_row(result_sql))
+        {
+            strcat(result1_char,'|');
+            strcat(result1_char,row[0]);
+        }
+        
+    }
+    else 
+    {
+        strcpy(result,"get_user_friend|您无权进行此操作！");
+    }
 
 }
 int setNonBlock(int sockfd)//设置非阻塞函数模块
@@ -206,14 +218,6 @@ int handleRecv(int clientFd)
         if(0==strcmp(type,"register"))
         {
             reg(clientFd,message);
-        }
-        else if(0==strcmp(type,"login"))
-        {
-            login(clientFd,message);
-        }
-        else if(0==strcmp(type,"update_profile"))
-        {
-            updateProfile(clientFd,message);
         }
     }
     return 0;
