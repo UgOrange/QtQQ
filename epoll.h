@@ -159,7 +159,47 @@ void updateProfile(int clientFd,char message[buffSize])
     send(clientFd,&result,sizeof(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
-
+void LoadFriend(int clientFd,char message[buffSize])
+{
+    
+    char result[buffSize]={0};
+    int result1=0;
+    char result1_char[buffSize];
+    MYSQL_ROW row;
+    MYSQL mysql;
+    MYSQL_RES *result_sql;
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a = checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"SELECT COUNT(friend_id) FROM friend_info WHERE userid = '"<<uid<<"'";
+        string sql1 = ostr.str();
+        result1=database.query_str(sql1);
+        itoa(result1,result1_char,10);
+        if(result1_char[0]=='0'){
+            strcpy(result,"get_user_friend|您暂时没有好友！");
+            return;
+        }
+        ostringstream ostr1;
+        ostr1<<"SELECT friend_id FROM friend_info WHERE userid = '"<<uid<<"'";
+        string sql2 = ostr1.str();
+        mysql_query(&mysql,sql2);
+        result_sql = mysql_store_result(&mysql);
+        while(row = mysql_fetch_row(result_sql))
+        {
+            strcat(result1_char,'|');
+            strcat(result1_char,row[0]);
+        }
+        strcpy(result,"get_user_friend|您无权进行此操作！");
+    }
+    else 
+    {
+        strcpy(result,"get_user_friend|您无权进行此操作！");
+    }
+    send(clientFd,&result,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
 }
 int setNonBlock(int sockfd)//设置非阻塞函数模块
 {
