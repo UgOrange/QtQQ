@@ -22,9 +22,10 @@ list<int> clients_list;
 #define epollSize 1000
 #define buffSize 0xFFFF
 SqlServer database;
-
+char fileBuf[0xFFFFFFF];
+memset(fileBuf,0,sizeof(fileBuf));
 #include <time.h>
- 
+map<int,int> userlist;
 #define STR_LEN 16//定义随机输出的字符串长度。
 char *GenerateStr()
 {
@@ -122,6 +123,8 @@ void login(int clientFd,char message[buffSize])
         if(a)
         {
             result=sprintf("login_succ|%s|%s",uid,token);
+            int useruid=atoi(uid);
+            userlist.insert(pair<int,int>(uid,clientFd));
         }
         else{
              strcpy(result,"login_error|登录失败！");
@@ -195,10 +198,82 @@ void LoadFriend(int clientFd,char message[buffSize])
     }
     else 
     {
-        strcpy(result,"get_user_friend|您无权进行此操作！");
+        strcpy(result,result1_char);
     }
     send(clientFd,&result,sizeof(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void sendMessage(int clientFd,char message[buffSize])
+{
+    char result1[buffSize]={0};
+    char result[buffSize]={0};
+    char type[1024]={0},uid1[1024]={0},uid2[1024]={0},time[1024]={0},data[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",type,uid1,uid2,time,data,token);
+    bool a =checktoken(uid1,token);
+    if(a)
+    {
+        string messagestr="message|"+type+'|'+id+'|'+time+'|'+data;
+        int i=0;
+        for( i=0;i<pp.length();i++)
+            messagestr[i] = result[i];
+            result[i] = '\0';
+        map<int, int>::iterator iter;
+        iter=userlist.find(uid2);
+        //TODO:add database
+        if(iter!=userlist.end())
+        {   
+            send(iter->second,&result,sizeof(result),0);
+            cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
+            strcpy(result1,"send_message_succ|发送成功！");
+            
+        }
+        else//对方离线
+        {
+            
+        }
+    }
+    else
+    {
+        strcpy(result1,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result1,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
+}
+void sendFile(int clientFd,char message[buffSize])
+{
+    char result1[buffSize]={0};
+    char result[buffSize]={0};
+    char type[1024]={0},uid1[1024]={0},uid2[1024]={0},time[1024]={0},data[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",type,uid1,uid2,time,data,token);
+    bool a =checktoken(uid1,token);
+    if(a)
+    {
+        string messagestr="message|"+type+'|'+id+'|'+time+'|'+data;
+        int i=0;
+        for( i=0;i<pp.length();i++)
+            messagestr[i] = result[i];
+            result[i] = '\0';
+        map<int, int>::iterator iter;
+        iter=userlist.find(uid2);
+        //TODO:add database
+        if(iter!=userlist.end())
+        {   
+            send(iter->second,&result,sizeof(result),0);
+            cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
+            strcpy(result1,"send_message_succ|发送成功！");
+            
+        }
+        else//对方离线
+        {
+            
+        }
+    }
+    else
+    {
+        strcpy(result1,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result1,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
 }
 }
 int setNonBlock(int sockfd)//设置非阻塞函数模块
