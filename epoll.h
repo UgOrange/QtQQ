@@ -59,7 +59,8 @@ bool checktoken(char uid[1024],char token[1024])
     string sql =ostr.str();
     string token1=database.query(sql);
     cout<<token1<<" "<<token<<endl;
-    if(token1==token)
+    string token2=token;
+    if(token1==token2)
     {
         cout<<"123";
         return true;
