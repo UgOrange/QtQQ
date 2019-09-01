@@ -244,7 +244,7 @@ void sendMessage(int clientFd,char message[buffSize])
         }
         else//对方离线
         {
-            
+            cout<<"user is not login!!"
         }
     }
     else
