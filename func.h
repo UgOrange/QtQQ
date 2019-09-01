@@ -39,6 +39,7 @@ SqlServer::SqlServer()
 }
 bool SqlServer::query_sql(string sql)
 {
+    cout<<sql<<endl;
     if(!mysql_query(connect,sql.data()))
     {
         return true;
