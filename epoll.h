@@ -310,6 +310,10 @@ int handleRecv(int clientFd)
         {
             updateProfile(clientFd,message);
         }
+        else if(0==strcmp(type,"send_message"))
+        {
+            updateProfile(clientFd,message);
+        }
     }
     return 0;
 }
