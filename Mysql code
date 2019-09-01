@@ -1,0 +1,52 @@
+1.1.注册：
+
+INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES (username,md5(password),nickname,signature,iconid,sercure_question_id,answer);
+
+SELECT * FROM user WHERE user_name = username;
+
+SELECT userid FROM user WHERE user_name = username;
+1.2.登录：
+
+SELECT password FROM user WHERE user_name = username ;
+
+
+1.3修改信息：
+
+UPDATE user SET nickname = nickname, signature = signature, head_portrait_id = iconid, password_protect_id = sercure_question_id, answer =answer WHERE userid = uid;
+
+1.4找回密码：
+
+SELECT answer,password_protect_id FROM user WHERE user_name = username;
+//判断正确后执行下一句
+UPDATE user SET password = password WHERE user_name = username;
+
+1.5加载用户信息：
+
+SELECT nickname，head_portrait_id，signature，password_protect_id，answer FROM user WHERE userid = uid;
+
+
+1.6加载好友信息：
+
+SELECT COUNT(friend_id),friend_id FROM friend_info WHERE userid = uid;
+
+
+1.7 加载群组信息:
+
+SELECT COUNT(group_chat_info_id),group_chat_info_id,group_chat_name FROM group_chat_info WHERE member_id = uid;
+SELECT COUNT(member_id),member_id,group_chat_name FROM group_chat_info WHERE group_chat_info_id = groupid;
+
+PS:(1)change online status-->//UPDATE user SET token = token , online_status = 1 WHERE userid = uid;
+(2)get token-->//SELECT token FROM user WHERE userid = uid;
+
+2.1添加好友
+
+
+INSERT INTO friend_apply (object_id,applicant_id) VALUES(uid1,uid2);
+
+add_friend|uid1|uid2|request|token
+
+
+
+
+
+
