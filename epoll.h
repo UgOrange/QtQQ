@@ -312,7 +312,7 @@ int handleRecv(int clientFd)
         }
         else if(0==strcmp(type,"send_message"))
         {
-            updateProfile(clientFd,message);
+            sendMessage(clientFd,message);
         }
     }
     return 0;
