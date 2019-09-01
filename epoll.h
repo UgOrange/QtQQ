@@ -18,7 +18,7 @@
 #include"func.h"
 using namespace std;
 list<int> clients_list;
-#define serverIP "10.194.57.238"
+#define serverIP "39.107.105.182"
 #define serverPort 8888
 #define epollSize 1000
 #define buffSize 0xFFFF

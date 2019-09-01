@@ -35,7 +35,7 @@ SqlServer::SqlServer()
         exit(0);
     }
     cout<<"connect to database\n";
-   connectMysql("localhost","root","","chatroom");
+   connectMysql("localhost","root","p/sxggtql","chatroom");
 }
 bool SqlServer::query_sql(string sql)
 {
