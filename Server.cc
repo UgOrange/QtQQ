@@ -1,12 +1,12 @@
 #include "epoll.h"
 #include <mysql/mysql.h>
-
+//高并发
 int main()
 {
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(serverPort);
-    serverAddr.sin_addr.s_addr = inet_addr(serverIP);
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     int listener = socket(AF_INET, SOCK_STREAM, 0);
     if(listener < 0) { perror("listener"); exit(-1);}
     printf("listen socket created \n");
