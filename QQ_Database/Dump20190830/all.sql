@@ -1,0 +1,10 @@
+source QQ_Database_chat_info.sql
+source QQ_Database_friend_apply.sql
+source QQ_Database_friend_info.sql
+source QQ_Database_group_chat_history.sql
+source QQ_Database_group_chat_info.sql
+source QQ_Database_group_chat_management.sql
+source QQ_Database_photo.sql
+source QQ_Database_single_chat_history.sql
+source QQ_Database_user.sql
+

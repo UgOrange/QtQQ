@@ -34,8 +34,8 @@ SqlServer::SqlServer()
         printf("mysql_init failed!\n");
         exit(0);
     }
-
-   connectMysql("localhost","root","","BIT");
+    cout<<"connect to database\n";
+   connectMysql("localhost","root","","chatroom");
 }
 bool SqlServer::query_sql(string sql)
 {
@@ -100,7 +100,7 @@ string SqlServer::queryFriend(string sql)
 string SqlServer::query(string sql)
 {
     string temp = "error";
-   // cout<<"line44 sql.data "<<sql.data()<<endl;;
+   cout<<"line44 sql.data "<<sql.data()<<endl<<connect<<endl;;
     //传入sql语句，将查询结果以char×返回
     if(!mysql_query(connect,sql.data()))
     {
@@ -144,6 +144,8 @@ void SqlServer::connectMysql(char *ip,char * user,char* password,char* database)
   } else {
     printf("Connection failed!\n");
   }
-  mysql_query(connect,"set names utf8");//防止乱码。设置和数据库的编码一致就不会乱码
+  if(mysql_query(connect,"set names utf8"));
+    {   perror("my_query");
+    }//防止乱码。设置和数据库的编码一致就不会乱码
 }
 #endif
