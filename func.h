@@ -105,7 +105,7 @@ string SqlServer::query(string sql)
     //if(!mysql_query(connect,sql.data()))
     //{
         //把查询结果给res_ptr
-        mysql_query(connect,sql.data())
+        mysql_query(connect,sql.data());
         res_ptr = mysql_store_result(connect);
         //cout<<"line49"<<endl;
         //如果结果不为空,则输出
