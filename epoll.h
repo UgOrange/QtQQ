@@ -60,7 +60,7 @@ bool checktoken(char uid[1024],char token[1024])
     string token1=database.query(sql);
     cout<<token1<<" "<<token<<endl;
     string token2=token;
-    if(token1==token2)
+    if(!token1.compare(token2))
     {
         cout<<"123";
         return true;
