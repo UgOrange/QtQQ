@@ -133,6 +133,7 @@ void login(int clientFd,char message[buffSize])
             int useruid;
             ss>>useruid;
             userlist.insert(map<int, int>::value_type(useruid,clientFd));
+            cout<<"User "<<uName<<"is login,uid is "<<useruid<<endl;
         }
         else{
              strcpy(result,"login_error|登录失败！");
@@ -231,6 +232,7 @@ void sendMessage(int clientFd,char message[buffSize])
             ss<<uid2;
             int useruid;
             ss>>useruid;
+            cout<<"UserUid is "<<useruid;
         iter=userlist.find(useruid);
         //TODO:add database
         if(iter!=userlist.end())
