@@ -113,7 +113,7 @@ void login(int clientFd,char message[buffSize])
     if(ret==passWd)
     {
         ostringstream ostr1;
-        ostr1<<"SELECT userid FROM user WHERE user_name ='"<<uName<<"')";
+        ostr1<<"SELECT userid FROM user WHERE user_name ='"<<uName<<"'";
         string sql1=ostr1.str();
         string uid=database.query(sql1);
         GenerateStr(token);
