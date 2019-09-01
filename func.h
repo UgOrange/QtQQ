@@ -102,9 +102,10 @@ string SqlServer::query(string sql)
     string temp = "error";
    cout<<"line44 sql.data "<<sql.data()<<endl<<connect<<endl;;
     //传入sql语句，将查询结果以char×返回
-    if(!mysql_query(connect,sql.data()))
-    {
+    //if(!mysql_query(connect,sql.data()))
+    //{
         //把查询结果给res_ptr
+        mysql_query(connect,sql.data())
         res_ptr = mysql_store_result(connect);
         //cout<<"line49"<<endl;
         //如果结果不为空,则输出
@@ -126,12 +127,12 @@ string SqlServer::query(string sql)
             return temp; 
         }
 
-    }   
-    else{
-        perror("my_query");
-        mysql_close(connect);
-        exit(0);
-    }
+    //}   
+    //else{
+        //perror("my_query");
+        //mysql_close(connect);
+        //exit(0);
+    //}
     return temp;
     
 }
