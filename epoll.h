@@ -66,6 +66,7 @@ bool checktoken(char uid[1024],char token[1024])
     }
     else
     {
+        cout<<"456";
         return false;
     }
 }
