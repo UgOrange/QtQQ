@@ -58,7 +58,8 @@ bool checktoken(char uid[1024],char token[1024])
     ostr<<"SELECT token FROM user WHERE userid ='"<<uid<<"'";
     string sql =ostr.str();
     string token1=database.query(sql);
-    if(token==token1)
+    cout<<token1<<" "<<token<<endl;
+    if(token1==token)
     {
         return true;
     }
