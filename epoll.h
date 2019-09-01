@@ -75,7 +75,7 @@ void reg(int clientFd,char message[buffSize])
     cout<<uName<<" "<<passWd<<" "<<nickName<<" "<<iconId<<" "<<signature<<" "<<secureId<<" "<<secureAnswer<<endl;
     ostringstream ostr;
     
-    ostr<<"INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES ('"<<uName<<"',"<<passWd<<"',"<<nickName<<"',"<<iconId<<"',"<<signature<<"',"<<secureId<<"',"<<secureAnswer<<"')";
+    ostr<<"INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES ('"<<uName<<"','"<<passWd<<"','"<<nickName<<"','"<<iconId<<"','"<<signature<<"','"<<secureId<<"','"<<secureAnswer<<"')";
     string sql=ostr.str();
     if(database.query_sql(sql))
     {
