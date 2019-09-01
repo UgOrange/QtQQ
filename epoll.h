@@ -226,7 +226,9 @@ void sendMessage(int clientFd,char message[buffSize])
     bool a =checktoken(uid1,token);
     if(a)
     {
-        string messagestr=messagestr+"message|"+type+'|'+uid1+'|'+time+'|'+data;
+        string strr1="message|";
+        string strr2="|";
+        string messagestr=strr1+(string)type+strr2+(string)uid1+strr2+(string)time+strr2+(string)data;
         int i=0;
         for( i=0;i<messagestr.length();i++)
             result[i] = messagestr[i];
