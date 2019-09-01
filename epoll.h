@@ -61,6 +61,7 @@ bool checktoken(char uid[1024],char token[1024])
     cout<<token1<<" "<<token<<endl;
     if(token1==token)
     {
+        cout<<"123";
         return true;
     }
     else
