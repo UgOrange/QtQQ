@@ -1,0 +1,136 @@
+1.1.注册：
+
+INSERT INTO user (user_name, password, nickname, signature, head_portrait_id, password_protect_id, answer) VALUES (username,md5(password),nickname,signature,iconid,sercure_question_id,answer);
+
+SELECT * FROM user WHERE user_name = username;
+
+SELECT userid FROM user WHERE user_name = username;
+1.2.登录：
+
+SELECT password FROM user WHERE user_name = username ;
+
+
+1.3修改信息：
+
+UPDATE user SET nickname = nickname, signature = signature, head_portrait_id = iconid, password_protect_id = sercure_question_id, answer =answer WHERE userid = uid;
+
+1.4找回密码：
+
+SELECT answer,password_protect_id FROM user WHERE user_name = username;
+//判断正确后执行下一句
+UPDATE user SET password = password WHERE user_name = username;
+
+1.5加载用户信息：
+
+SELECT nickname，head_portrait_id，signature，password_protect_id，answer FROM user WHERE userid = uid;
+
+
+1.6加载好友信息：
+
+SELECT COUNT(friend_id),friend_id FROM friend_info WHERE userid = uid OR friend_id = uid;
+
+
+1.7 加载群组信息:
+
+SELECT COUNT(group_chat_info_id),group_chat_info_id,group_chat_name FROM group_chat_info WHERE member_id = uid;
+SELECT COUNT(member_id),member_id,group_chat_name FROM group_chat_info WHERE group_chat_info_id = groupid;
+
+PS:(1)change online status-->//UPDATE user SET token = token , online_status = 1 WHERE userid = uid;
+(2)get token-->//SELECT token FROM user WHERE userid = uid;
+
+2.1添加好友
+
+INSERT INTO friend_apply (object_id,applicant_id) VALUES(uid1,uid2);
+
+
+2.2删除好友
+
+DELETE FROM friend_info WHERE userid = uid1 OR friend_id = uid2;
+
+
+2.3处理好友请求
+
+i>load information:
+		SELECT object_id,applicant_id FROM friend_apply WHERE object_id = uid; 
+
+
+ii>dual with it(uid1=object_id,uid2=applicant_id)
+1(accept):INSERT INTO friend_info (userid,friend_id) VALUES (uid1,uid2);
+		  DELECT FROM friend_apply WHERE object_id = uid1 AND applicant_id = uid2; 
+
+0(reject):DELECT FROM friend_apply WHERE object_id = uid1 AND applicant_id = uid2;
+
+3.1 创建群
+
+
+INSERT INTO group_chat_info (member_id,group_chat_name,group_chat_admin,group_chat_manager) VALUES (adminid,group_name,1,1);
+
+
+3.2 添加群
+
+
+INSERT INTO group_chat_management (applicant_id,group_chat_info_id) VALUES (uid,groupid);
+
+3.3 处理群请求
+
+i>load information:(uid->mangager or admin userid)
+		SELECT applicant_id,group_chat_info_id FROM group_chat_management WHERE group_chat_admin_id = uid1 OR group_chat_manager_id = uid1;
+
+ii>dual with it
+
+1(accept):INSERT INTO group_chat_info (applicant_id,group_chat_info_id) VALUES (uid1,groupid);
+		  DELETE FROM group_chat_management WHERE group_chat_info_id = groupid AND applicant_id = uid;
+
+0(reject):DELETE FROM group_chat_management WHERE group_chat_info_id = groupid AND applicant_id = uid;		  
+
+4.1 发送消息
+
+0:SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 = uid1 AND member_id2 = uid2) OR (member_id1 = uid2 AND member_id2 = uid1);
+  INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES (single_chat_info_id,uid1,time,data);
+
+1:SELECT member_id FROM group_chat_info WHERE group_chat_info_id = uid2 AND member_id = uid1;//find whether uid is in this group,if not,return error;
+  INSERT INTO group_chat_history (group_chat_info_id,time,poster_id,content) VALUES (uid2,time,uid1,data);
+  
+
+4.2 发送文件（图片）(可能需要分块处理)
+
+
+
+0:INSERT INTO photo (poster_id,time,photo_content) VALUES (uid1,time,data);
+  SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 = uid1 AND member_id2 = uid2) OR (member_id1 = uid2 AND member_id2 = uid1);
+  INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES (single_chat_info_id,uid1,time,"IMAGE");
+
+
+send_file|type|uid1|uid2|time|id|data|token（0为图片，1为文件）
+
+send_file_succ|发送成功！
+
+send_file_error|（失败原因）
+
+4.3 receive image
+
+SELECT photo_content, poster_id, time FROM photo,single_chat_history WHERE photo.time=single_chat_history.time AND photo.poster_id = single_chat_history.poster_id AND single_chat_history.photo = 1 AND chat_info_id IN (SELECT single_chat_info_id FROM single_chat_info WHERE userid = uid);
+
+5.1 好友请求
+
+SELECT applicant_id FROM friend_apply WHERE object_id = uid2;
+
+friend_request|uid2|request
+5.2 群组请求
+
+SELECT group_chat_manager,group_chat_admin FROM group_chat_info WHERE group_chat_info_id = groupid AND member_id = uid;//both 0->return error ;have one 1->continue ;
+
+SELECT applicant_id FROM group_chat_management WHERE group_chat_id = groupid;
+
+group_request|uid|groupid|request
+5.2 新消息
+
+SELECT nickname,content,COUNT(poster_id) FROM single_chat_history,user  WHERE chat_info_id IN (SELECT single_chat_info_id FROM single_chat_info WHERE member_id1 = uid OR member_id2 = uid) AND read = 0 AND single_chat_history.poster_id = user.userid;//single chat
+
+
+SELECT group_chat_name,nickname,content,COUNT(group_chat_info_id) FROM group_chat_history , user  group_chat_history.poster_id = user.userid WHERE group_chat_info_id IN (SELECT group_chat_info_id FROM group_chat_info WHERE member_id = uid) AND read = 0 AND group_chat_history.poster_id = user.userid AND group_chat_info.group_chat_info_id = group_chat_history.group_chat_info_id;
+
+message|type|id|time|data
+5.2 新文件
+
+file|type|id|time|data
