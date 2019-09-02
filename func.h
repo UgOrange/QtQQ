@@ -295,8 +295,16 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
     sql=ostr.str();
     string sid=database.query(sql);
     ostr.str("");
+    std::stringstream ss;
+            ss<<sid;
+            int useruid;
+            ss>>useruid;
+          std::stringstream ss1;
+            ss1<<secureId;
+            int useruid1;
+            ss>>useruid1;      
     cout<<sid<<" "<<answer<<endl;
-    if(sid==secureId&&answer==secureAnswer)
+    if(useruid==useruid1&&answer==secureAnswer)
     {
         ostr<<"UPDATE user SET password ='"<<passWd<<"' WHERE user_name = '"<<uName<<"'";
         sql=ostr.str();
