@@ -24,6 +24,7 @@ class ServerFunc{
       private:
             map<int,int> userlist;
             int count;
+            map<int, int>::iterator iter;
       public:
             ServerFunc();
             char *GenerateStr(char *str);
@@ -155,7 +156,8 @@ void ServerFunc::login(int clientFd,char message[buffSize])
             string str11="login_succ|"+uid+"|"+token;
             for( i=0;i<str11.length();i++)
                 result[i] = str11[i];
-                result[i] = '\0';string ret=database.query(sql);
+                result[i] = '\0';
+                string ret=database.query(sql);
             std::stringstream ss;
             ss<<uid;
             int useruid;
@@ -175,7 +177,6 @@ void ServerFunc::login(int clientFd,char message[buffSize])
 }
 void ServerFunc::logout(int clientFd)
 {
-
 map<int,int>::iterator na;
 for (na = userlist.begin(); na != userlist.end(); na++)
     {if(na->second==clientFd)
@@ -183,6 +184,12 @@ for (na = userlist.begin(); na != userlist.end(); na++)
     if (na==userlist.end())
         return;
     userlist.erase(na);
+    string userid=to_string(na->first);
+    string sql="UPDATE user SET token = NULL,online_status = 0 WHERE userid = '";
+    sql=sql+userid;
+    string str1="'";
+    sql=sql+str1;
+    database.query_sql(sql);
 }
 void ServerFunc::updateProfile(int clientFd,char message[buffSize])
 {
@@ -260,38 +267,93 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
     bool a =checktoken(uid1,token);
     if(a)
     {
-        string strr1="message|";
-        string strr2="|";
-        string messagestr=strr1+(string)type+strr2+(string)uid1+strr2+(string)time+strr2+(string)data;
-        int i=0;
-        for( i=0;i<messagestr.length();i++)
-            result[i] = messagestr[i];
-            result[i] = '\0';
-        map<int, int>::iterator iter;
-        std::stringstream ss;
+        if(type[0]=='0'||type[0]=='2')
+        {
+            string strr1="message|";
+            string strr2="|";
+            string messagestr=strr1+(string)type+strr2+(string)uid1+strr2+(string)time+strr2+(string)data;
+            int i=0;
+            for( i=0;i<messagestr.length();i++)
+                result[i] = messagestr[i];
+                result[i] = '\0';
+            std::stringstream ss;
             ss<<uid2;
             int useruid;
             ss>>useruid;
-            cout<<"UserUid is "<<useruid;
+            cout<<"UserUid is "<<useruid<<endl;
         iter=userlist.find(useruid);
         //TODO:add database
         if(iter!=userlist.end())
         {   
-            send(iter->second,&result,sizeof(result),0);
+            ostringstream ostr;
+            ostr<<"SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 ='"<<uid1<<"' AND member_id2 = '"<<uid2<<"') OR (member_id1 = '"<<uid2<<"' AND member_id2 = '"<<uid1<<"')";
+            string sql=ostr.str();
+            string single_chat_info_id=database.query(sql);
+            ostr.str("");
+            ostr<<"INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES ('"<<single_chat_info_id<<"','"<<uid1<<"','"<<time<<"','"<<data<<"')";
+            sql=ostr.str();
+            bool a=database.query_sql(sql);
+            send(iter->second,&result,strlen(result),0);
             cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
             strcpy(result1,"send_message_succ|发送成功！");
-            
+            bzero(result,sizeof(result));
         }
         else//对方离线=database.query_sql(
         {
+
             cout<<"user is not login!!"<<endl;
+        }
+
+        }
+        if(type[0]=='1'||type[0]=='3')
+        {
+            ostringstream ostr;
+        ostr.str("");
+        ostr<<"SELECT COUNT(member_id) FROM group_chat_info WHERE group_chat_info_id = '"<<uid2<<"'";
+        string sql=ostr.str();
+        string count1=database.query(sql);
+        ostr.str("");
+        stringstream ss;
+        ss<<count1;
+        int mCount;
+        ss>>mCount;
+        ostr.str("");
+        ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_info_id ='"<<uid2<<"' AND group_chat_admin = 0";
+        sql=ostr.str();
+        int uidtest;
+        for (int i=0;i<mCount-1;i++)
+        {
+            ss.str("");
+            string uidd=database.query(sql,i);
+            ss<<count1;
+            ss>>uidtest;
+            cout<<"UserUid is "<<uidtest<<endl;
+            iter=userlist.find(uidtest);
+            if(iter!=userlist.end())
+            {
+                strcpy(result,"message|");
+                strcat(result,type);
+                strcat(result,"|");
+                strcat(result,uid1);
+                strcat(result,"|");
+                strcat(result,time);
+                strcat(result,"|");
+                strcat(result,data);
+                send(iter->second,&result,strlen(result),0);
+                cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
+            }
+            else
+            {
+                /* code */
+            } 
+        }
         }
     }
     else
     {
         strcpy(result1,"update_profile_error|token错误，请重新登录！");
     }
-    send(clientFd,&result1,strlen(result),0);
+    send(clientFd,&result1,strlen(result1),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
 }
 void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
