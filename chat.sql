@@ -148,6 +148,33 @@ LOCK TABLES `group_chat_management` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `group_chat_temperary_message`
+--
+
+DROP TABLE IF EXISTS `group_chat_temperary_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `group_chat_temperary_message` (
+  `poster_id` int(5) NOT NULL,
+  `recv_id` int(5) NOT NULL,
+  `content` varchar(200) DEFAULT NULL,
+  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `read` tinyint(1) DEFAULT '0',
+  `group_chat_info_id` int(11) NOT NULL,
+  PRIMARY KEY (`poster_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `group_chat_temperary_message`
+--
+
+LOCK TABLES `group_chat_temperary_message` WRITE;
+/*!40000 ALTER TABLE `group_chat_temperary_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `group_chat_temperary_message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `photo`
 --
 
@@ -244,7 +271,7 @@ CREATE TABLE `user` (
   `answer` varchar(32) NOT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -253,6 +280,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (00123,'andy','123','amy','hahaha',0,'5',1,NULL,4,'yes');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -283,4 +311,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-02 16:08:10
+-- Dump completed on 2019-09-02 16:52:28
