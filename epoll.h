@@ -89,7 +89,7 @@ int handleRecv(int clientFd)
         }
         else if(0==strcmp(type,"add_friend"))
         {
-            Server.updateProfile(clientFd,message);
+            Server.addFriend(clientFd,message);
         }
         else if(0==strcmp(type,"send_message"))
         {
