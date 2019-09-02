@@ -102,6 +102,38 @@ int handleRecv(int clientFd)
         {
             Server.getUserGroup(clientFd,message);
         }
+        else if(0==strcmp(type,"get_group_info"))
+        {
+            Server.getGroupInfo(clientFd,message);
+        }
+        else if(0==strcmp(type,"add_friend"))
+        {
+            Server.addFriend(clientFd,message);
+        }
+        else if(0==strcmp(type,"del_friend"))
+        {
+            Server.delFriend(clientFd,message);
+        }
+        else if(0==strcmp(type,"hand_friend_request"))
+        {
+            Server.confirmFriendRequest(clientFd,message);
+        }
+        else if(0==strcmp(type,"create_group"))
+        {
+            Server.createGroup(clientFd,message);
+        }
+        else if(0==strcmp(type,"join_group"))
+        {
+            Server.joinGroup(clientFd,message);
+        }
+        else if(0==strcmp(type,"hand_group_request"))
+        {
+            Server.handleGroupRequest(clientFd,message);
+        }
+        else
+        {
+            cout<<"not find matched func!!!!"<<endl;
+        }
     }
     return 0;
 }

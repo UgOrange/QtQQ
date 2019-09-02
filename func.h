@@ -43,6 +43,8 @@ class ServerFunc{
             void confirmFriendRequest(int clientFd,char message[buffSize]);
             void createGroup(int clientFd,char message[buffSize]);
             void joinGroup(int clientFd,char message[buffSize]);
+            void handleGroupRequest(int clientFd,char message[buffSize]);
+            
 
 };
 
@@ -378,7 +380,7 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
         }
     }
     else{
-        strcpy(result,"update_profile_error|token错误，请重新登录！");
+        strcpy(result,"token_error|token错误，请重新登录！");
     }
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
@@ -386,12 +388,105 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
 void ServerFunc::getGroupInfo(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0};
-    sscanf(message,"%[^|]|%s",uid,token);
+    char uid[1024]={0},token[1024]={0},groupid[1024];
+    sscanf(message,"%[^|]|%[^|]|%s",uid,groupid,token);
     bool a =checktoken(uid,token);
     if(a)
     {
-
+        ostringstream ostr;
+        ostr<<"SELECT group_chat_name FROM group_chat_info WHERE group_chat_info_id = '"<<groupid<<"'";
+        string sql=ostr.str();
+        string groupName=database.query(sql);
+        if(groupName=="NULL")
+        {
+            strcpy(result,"update_profile_error|群id不存在");
+        }
+        else
+        {ostr.str("");
+        ostr<<"SELECT COUNT(member_id) FROM group_chat_info WHERE group_chat_info_id = '"<<groupid<<"'";
+        sql=ostr.str();
+        string count1=database.query(sql);
+        ostr.str("");
+        stringstream ss;
+        ss<<count1;
+        int mCount;
+        ss>>mCount;
+        strcpy(result,"groupinfo|");
+        strcat(result,groupid);
+        strcat(result,"|");
+        strcat(result,groupName.c_str());
+        strcat(result,count1.c_str());
+        ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_info_id ='"<<groupid<<"' AND group_chat_admin = 1";
+        sql=ostr.str();
+        string adminUid=database.query(sql);
+        ostr.str("");
+        ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_info_id ='"<<groupid<<"' AND group_chat_admin = 0";
+        sql=ostr.str();
+        strcat(result,"|");
+        strcat(result,adminUid.c_str());
+        for (int i=0;i<mCount-1;i++)
+        {
+            strcat(result,"|");
+            string uidd=database.query(sql,i);
+            strcat(result,uidd.c_str());
+        }
+        }
+    }
+    else{
+        strcpy(result,"token_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::addFriend(int clientFd,char message[buffSize])
+{
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0},request[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,request,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"INSERT INTO friend_apply (object_id,applicant_id) VALUES('"<<uid<<"','"<<uid1<<"'";
+        string sql=ostr.str();
+        bool ret=database.query_sql(sql);
+        ostr.str("");
+        if(a)
+        {
+            strcpy(result,"add_friend_succ|已发送请求！");
+        }
+        else
+        {
+            strcpy(result,"add_friend_error|用户不存在！");
+        }
+    }
+    else{
+        strcpy(result,"token_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::delFriend(int clientFd,char message[buffSize])
+{
+ char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"DELETE FROM friend_info WHERE (userid ='"<<uid<<"' AND friend_id = '"<<uid1<<"') OR (userid = '"<<uid1<<"' AND friend_id = '"<<uid<<"')";
+        string sql=ostr.str();
+        bool a=database.query_sql(sql);
+        ostr.str("");
+        if(a)
+        {
+            strcpy(result,"del_friend_succ|删除成功！");
+        }
+        else
+        {
+            strcpy(result,"del_friend_error|没有这个好友！");
+        }
     }
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
@@ -399,24 +494,133 @@ void ServerFunc::getGroupInfo(int clientFd,char message[buffSize])
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
-void ServerFunc::addFriend(int clientFd,char message[buffSize])
-{
-
-}
-void ServerFunc::delFriend(int clientFd,char message[buffSize])
-{
-
-}
 void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
 {
-
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},flag[4]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,flag,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {  
+            ostringstream ostr;
+            ostr<<"DELECT FROM friend_apply WHERE object_id = '"<<uid<<"' AND applicant_id = '"<<uid1<<"'" ;
+            string sql=ostr.str();
+            bool ret=database.query_sql(sql);
+            ostr.str("");
+            if(ret&&flag[0]=='0')
+            {ostr<<"INSERT INTO friend_info (userid,friend_id) VALUES ('"<<uid<<"','"<<uid1<<"')" ;
+            sql=ostr.str();
+            string nickname=database.query(sql);
+            ostr.str("");
+            strcpy(result,"hand_friend_request_succ|成功同意请求！");
+            }
+            else if(ret&&flag[0]=='1')
+            {
+                strcpy(result,"hand_friend_request_succ|成功拒绝请求！");
+            }
+            else if(ret==false){
+                strcpy(result,"hand_friend_request_error|不存在的请求！");
+            }
+    }
+    else{
+        strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::createGroup(int clientFd,char message[buffSize])
 {
-
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},groupName[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%s",uid,groupName,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"INSERT INTO group_chat_info (member_id,group_chat_name,group_chat_admin,group_chat_manager) VALUES ('"<<uid<<"','"<<groupName<<"','"<<"1,1)";
+        string sql=ostr.str();
+        bool ret=database.query_sql(sql);
+        ostr.str("");
+        if(ret)
+        {
+            ostr<<"SELECT group_chat_info_id FROM group_chat_info WHERE group_chat_name = '"<<groupName<<"'";
+            sql=ostr.str();
+            string groupId=database.query(sql);
+            strcpy(result,"create_group_succ|");
+            strcat(result,groupId.c_str());
+            strcat(result,"|");
+        }
+        else
+        {
+            strcpy(result,"create_group_error|groupid|群组创建失败！");
+        }
+    }
+    else{
+        strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::joinGroup(int clientFd,char message[buffSize])
 {
-
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"INSERT INTO friend_apply (object_id,applicant_id) VALUES('"<<uid<<"','"<<uid1<<"'";
+        string sql=ostr.str();
+        bool ret=database.query_sql(sql);
+        ostr.str("");
+        if(a)
+        {
+            strcpy(result,"add_friend_succ|已发送请求！");
+        }
+        else
+        {
+            strcpy(result,"add_friend_error|用户不存在！");
+        }
+    }
+    else{
+        strcpy(result,"token_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
+{
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0},flag[4]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,flag,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {  
+            ostringstream ostr;
+            ostr<<"DELECT FROM friend_apply WHERE object_id = '"<<uid<<"' AND applicant_id = '"<<uid1<<"'" ;
+            string sql=ostr.str();
+            bool ret=database.query_sql(sql);
+            ostr.str("");
+            if(ret&&flag[0]=='0')
+            {ostr<<"INSERT INTO friend_info (userid,friend_id) VALUES ('"<<uid<<"','"<<uid1<<"')" ;
+            sql=ostr.str();
+            string nickname=database.query(sql);
+            ostr.str("");
+            strcpy(result,"hand_friend_request_succ|成功同意请求！");
+            }
+            else if(ret&&flag[0]=='1')
+            {
+                strcpy(result,"hand_friend_request_succ|成功拒绝请求！");
+            }
+            else if(ret==false){
+                strcpy(result,"hand_friend_request_error|不存在的请求！");
+            }
+    }
+    else{
+        strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 #endif
