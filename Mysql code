@@ -94,11 +94,22 @@ ii>dual with it
 
 4.2 发送文件（图片）(可能需要分块处理)
 
+
+
+0:INSERT INTO photo (poster_id,time,photo_content) VALUES (uid1,time,data);
+  SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 = uid1 AND member_id2 = uid2) OR (member_id1 = uid2 AND member_id2 = uid1);
+  INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES (single_chat_info_id,uid1,time,"IMAGE");
+
+
 send_file|type|uid1|uid2|time|id|data|token（0为图片，1为文件）
 
 send_file_succ|发送成功！
 
 send_file_error|（失败原因）
+
+4.3 receive image
+
+SELECT photo_content, poster_id, time FROM photo,single_chat_history WHERE photo.time=single_chat_history.time AND photo.poster_id = single_chat_history.poster_id AND single_chat_history.photo = 1 AND chat_info_id IN (SELECT single_chat_info_id FROM single_chat_info WHERE userid = uid);
 
 5.1 好友请求
 
@@ -114,10 +125,10 @@ SELECT applicant_id FROM group_chat_management WHERE group_chat_id = groupid;
 group_request|uid|groupid|request
 5.2 新消息
 
-SELECT user_name,content,COUNT(poster_id) FROM single_chat_history,user  WHERE chat_info_id IN (SELECT single_chat_info_id FROM single_chat_info WHERE member_id1 = uid OR member_id2 = uid) AND read = 0 AND single_chat_history.poster_id = user.userid;//single chat
+SELECT nickname,content,COUNT(poster_id) FROM single_chat_history,user  WHERE chat_info_id IN (SELECT single_chat_info_id FROM single_chat_info WHERE member_id1 = uid OR member_id2 = uid) AND read = 0 AND single_chat_history.poster_id = user.userid;//single chat
 
 
-SELECT group_chat_name,user_name,content,COUNT(group_chat_info_id) FROM group_chat_history , user  group_chat_history.poster_id = user.userid WHERE group_chat_info_id IN (SELECT group_chat_info_id FROM group_chat_info WHERE member_id = uid) AND read = 0 AND group_chat_history.poster_id = user.userid AND group_chat_info.group_chat_info_id = group_chat_history.group_chat_info_id;
+SELECT group_chat_name,nickname,content,COUNT(group_chat_info_id) FROM group_chat_history , user  group_chat_history.poster_id = user.userid WHERE group_chat_info_id IN (SELECT group_chat_info_id FROM group_chat_info WHERE member_id = uid) AND read = 0 AND group_chat_history.poster_id = user.userid AND group_chat_info.group_chat_info_id = group_chat_history.group_chat_info_id;
 
 message|type|id|time|data
 5.2 新文件
