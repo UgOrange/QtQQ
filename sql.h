@@ -1,11 +1,29 @@
-#include "func.h"
-#include<stdio.h>
-#include<iostream>
-#include<stdlib.h>
-#include<string>
+#ifndef __SQL_H__
+#define __SQL_H__
+#include <iostream>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/epoll.h>
+#include <unistd.h>
 #include<errno.h>
+#include <string>
 #include<mysql/mysql.h>
 using namespace std;
+class SqlServer
+{
+private:
+    /* data */
+    MYSQL *connect; //数据库链接指针
+    MYSQL_RES *res_ptr;//指向查询结果的指针
+    MYSQL_FIELD *field;//字段结构指针
+    MYSQL_ROW result_row;//按行返回查询信息
+public:
+    SqlServer();
+    void connectMysql(char *ip,char * user,char* password,char* database);   //连接数据库
+    string query(string sql);    //执行sql语句接口
+    string queryFriend(string sql);
+    bool query_sql(string sql);
+};
 SqlServer::SqlServer()
 {
     //初始化连接句柄
@@ -16,11 +34,12 @@ SqlServer::SqlServer()
         printf("mysql_init failed!\n");
         exit(0);
     }
-
-   connectMysql("localhost","root","Z001221z","user");
+    cout<<"connect to database\n";
+   connectMysql("localhost","root","p/sxggtql","chatroom");
 }
 bool SqlServer::query_sql(string sql)
 {
+    cout<<sql<<endl;
     if(!mysql_query(connect,sql.data()))
     {
         return true;
@@ -81,12 +100,13 @@ string SqlServer::queryFriend(string sql)
 }
 string SqlServer::query(string sql)
 {
-    string temp = "NULL";
-   // cout<<"line44 sql.data "<<sql.data()<<endl;;
+    string temp = "error";
+   cout<<"line44 sql.data "<<sql.data()<<endl<<connect<<endl;;
     //传入sql语句，将查询结果以char×返回
-    if(!mysql_query(connect,sql.data()))
-    {
+    //if(!mysql_query(connect,sql.data()))
+    //{
         //把查询结果给res_ptr
+        mysql_query(connect,sql.data());
         res_ptr = mysql_store_result(connect);
         //cout<<"line49"<<endl;
         //如果结果不为空,则输出
@@ -108,12 +128,26 @@ string SqlServer::query(string sql)
             return temp; 
         }
 
-    }   
-    else{
-        perror("my_query");
-        mysql_close(connect);
-        exit(0);
-    }
+    //}   
+    //else{
+        //perror("my_query");
+        //mysql_close(connect);
+        //exit(0);
+    //}
     return temp;
     
 }
+void SqlServer::connectMysql(char *ip,char * user,char* password,char* database)
+{
+    //连接数据库
+    connect =mysql_real_connect(connect,ip,user,password,database,0,NULL,0);
+    if (connect) {
+    printf("Connection success!\n");
+  } else {
+    printf("Connection failed!\n");
+  }
+  if(mysql_query(connect,"set names utf8"));
+    {   perror("my_query");
+    }//防止乱码。设置和数据库的编码一致就不会乱码
+}
+#endif
