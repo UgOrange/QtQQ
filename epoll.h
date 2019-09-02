@@ -86,9 +86,13 @@ int handleRecv(int clientFd)
         {
             Server.updateProfile(clientFd,message);
         }
+        else if(0==strcmp(type,"add_friend"))
+        {
+            Server.updateProfile(clientFd,message);
+        }
         else if(0==strcmp(type,"send_message"))
         {
-            Server.sendMessage(clientFd,message);
+            Server.LoadFriend(clientFd,message);
         }
         else if(0==strcmp(type,"forget_passwd"))
         {
