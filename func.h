@@ -180,7 +180,7 @@ void ServerFunc::updateProfile(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"UPDATE user SET nickname = '"<<nickName<<"', signature = '"<<signature<<"', head_portrait_id = '"<<iconId<<"'"<<"' WHERE userid = '"<<uid<<"'";
+        ostr<<"UPDATE user SET nickname = '"<<nickName<<"', signature = '"<<signature<<"', head_portrait_id = '"<<iconId<<"'"<<" WHERE userid = '"<<uid<<"'";
         string sql=ostr.str();
         bool a=database.query_sql(sql);
         if(a)
