@@ -328,7 +328,7 @@ void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
     sql=ostr.str();
     string sig=database.query(sql);
     ostr.str("");
-    strcpy(result,"get_user_info|");
+    strcpy(result,"userinfo|");
     strcat(result,nickname.c_str());
     strcat(result,"|");
     strcat(result,hid.c_str());
