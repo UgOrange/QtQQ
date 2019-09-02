@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS `friend_apply`;
 CREATE TABLE `friend_apply` (
   `object_id` int(5) NOT NULL,
   `applicant_id` int(5) NOT NULL,
+  `friend_apply_message` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -43,7 +44,7 @@ CREATE TABLE `friend_apply` (
 
 LOCK TABLES `friend_apply` WRITE;
 /*!40000 ALTER TABLE `friend_apply` DISABLE KEYS */;
-INSERT INTO `friend_apply` VALUES (12,5),(13,5);
+INSERT INTO `friend_apply` VALUES (12,5,NULL),(13,5,NULL);
 /*!40000 ALTER TABLE `friend_apply` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,4 +312,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-02 16:52:28
+-- Dump completed on 2019-09-02 17:02:17
