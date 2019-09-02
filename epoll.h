@@ -93,11 +93,15 @@ int handleRecv(int clientFd)
         }
         else if(0==strcmp(type,"send_message"))
         {
-            Server.LoadFriend(clientFd,message);
+            Server.sendMessage(clientFd,message);
         }
         else if(0==strcmp(type,"forget_passwd"))
         {
             Server.forgetPassWd(clientFd,message);
+        }
+        else if(0==strcmp(type,"get_user_friend"))
+        {
+            Server.LoadFriend(clientFd,message);
         }
         else if(0==strcmp(type,"get_user_info"))
         {
