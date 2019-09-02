@@ -61,6 +61,7 @@ int handleRecv(int clientFd)
         close(clientFd);
         clients_list.remove(clientFd); //server remove the client
         printf("ClientID = %d closed.\n now there are %d client in the char room\n", clientFd, (int)clients_list.size());
+        Server.logout(clientFd);
     }
     else
     {

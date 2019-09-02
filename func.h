@@ -22,7 +22,6 @@ SqlServer database;
 using namespace std;
 class ServerFunc{
       private:
-            list<int> clients_list;
             map<int,int> userlist;
             int count;
       public:
@@ -31,6 +30,7 @@ class ServerFunc{
             bool checktoken(char uid[1024],char token[1024]);
             void reg(int clientFd,char message[buffSize]);
             void login(int clientFd,char message[buffSize]);
+            void logout(int clientFd);
             void updateProfile(int clientFd,char message[buffSize]);
             void LoadFriend(int clientFd,char message[buffSize]);
             void sendMessage(int clientFd,char message[buffSize]);
@@ -173,6 +173,17 @@ void ServerFunc::login(int clientFd,char message[buffSize])
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
+void ServerFunc::logout(int clientFd)
+{
+
+map<int,int>::iterator na;
+for (na = userlist.begin(); na != userlist.end(); na++)
+    {if(na->second==clientFd)
+        break;}
+    if (na==userlist.end())
+        return;
+    userlist.erase(na);
+}
 void ServerFunc::updateProfile(int clientFd,char message[buffSize])
 {
     char result[buffSize];
@@ -271,7 +282,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             strcpy(result1,"send_message_succ|发送成功！");
             
         }
-        else//对方离线
+        else//对方离线=database.query_sql(
         {
             cout<<"user is not login!!"<<endl;
         }
@@ -360,7 +371,7 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"SELECT COUNT(group_chat_info_id) FROM group_chat_info WHERE member_id = '"<<uid<<"'";
+        ostr<<"SELECT COUNT(group_chat_info_id=database.query_sql( FROM group_chat_info WHERE member_id = '"<<uid<<"'";
         string sql=ostr.str();
         ostr.str("");
         string groupCount=database.query(sql);
@@ -442,12 +453,12 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
     char uid[1024]={0},token[1024]={0},uid1[1024]={0},request[1024]={0};
-    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,request,token);
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,request,token);
     bool a =checktoken(uid,token);
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO friend_apply (object_id,applicant_id) VALUES('"<<uid<<"','"<<uid1<<"'";
+        ostr<<"INSERT INTO friend_apply (object_id,applicant_id,friend_apply_message) VALUES('"<<uid<<"','"<<uid1<<"','"<<request<<"')";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
@@ -503,7 +514,7 @@ void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
     if(a)
     {  
             ostringstream ostr;
-            ostr<<"DELECT FROM friend_apply WHERE object_id = '"<<uid<<"' AND applicant_id = '"<<uid1<<"'" ;
+            ostr<<"DELETE FROM friend_apply WHERE object_id = '"<<uid<<"' AND applicant_id = '"<<uid1<<"'" ;
             string sql=ostr.str();
             bool ret=database.query_sql(sql);
             ostr.str("");
@@ -564,23 +575,23 @@ void ServerFunc::createGroup(int clientFd,char message[buffSize])
 void ServerFunc::joinGroup(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0},uid1[1024]={0};
-    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,token);
+    char uid[1024]={0},token[1024]={0},groupId[1024]={0},request[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,groupId,request,token);
     bool a =checktoken(uid,token);
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO friend_apply (object_id,applicant_id) VALUES('"<<uid<<"','"<<uid1<<"'";
+        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_info_id) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
         if(a)
         {
-            strcpy(result,"add_friend_succ|已发送请求！");
+            strcpy(result,"join_group_succ|已发送请求！");
         }
         else
         {
-            strcpy(result,"add_friend_error|用户不存在！");
+            strcpy(result,"join_group_error|群组不存在！");
         }
     }
     else{
@@ -592,29 +603,29 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
 void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0},flag[4]={0},uid1[1024]={0};
-    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,flag,token);
+    char uid[1024]={0},token[1024]={0},flag[4]={0},groupid[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,groupid,flag,token);
     bool a =checktoken(uid,token);
     if(a)
     {  
             ostringstream ostr;
-            ostr<<"DELECT FROM friend_apply WHERE object_id = '"<<uid<<"' AND applicant_id = '"<<uid1<<"'" ;
+            ostr<<"DELETE FROM group_chat_management WHERE group_chat_info_id = '"<<groupid<<"' AND applicant_id = '"<<uid<<"'" ;
             string sql=ostr.str();
             bool ret=database.query_sql(sql);
             ostr.str("");
             if(ret&&flag[0]=='0')
-            {ostr<<"INSERT INTO friend_info (userid,friend_id) VALUES ('"<<uid<<"','"<<uid1<<"')" ;
+            {ostr<<"INSERT INTO group_chat_info (applicant_id,group_chat_info_id) VALUES ('"<<uid<<"','"<<groupid<<"')" ;
             sql=ostr.str();
             string nickname=database.query(sql);
             ostr.str("");
-            strcpy(result,"hand_friend_request_succ|成功同意请求！");
+            strcpy(result,"hand_group_request_succ|成功同意请求！");
             }
             else if(ret&&flag[0]=='1')
             {
-                strcpy(result,"hand_friend_request_succ|成功拒绝请求！");
+                strcpy(result,"hand_group_request_succ|成功拒绝请求！");
             }
             else if(ret==false){
-                strcpy(result,"hand_friend_request_error|不存在的请求！");
+                strcpy(result,"hand_group_request_error|不存在的请求！");
             }
     }
     else{
