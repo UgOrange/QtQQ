@@ -281,7 +281,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
     send(clientFd,&result1,sizeof(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
 }
-void forgetPassWd(int clientFd,char message[buffSize])
+void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
     char secureId[1024]={0},secureAnswer[1024]={0},uName[1024]={0},passWd[1024]={0};
@@ -300,40 +300,40 @@ void forgetPassWd(int clientFd,char message[buffSize])
         ostr<<"UPDATE user SET password ='"<<passWd<<"' WHERE user_name = '"<<uName<<"'";
         sql=ostr.str();
         database.query_sql(sql);
-        strcpy(result,"up_pass_succ|修改成功！")
+        strcpy(result,"up_pass_succ|修改成功！");
     }
     else{
-        strcpy(result,"up_pass_error|密保错误！")
+        strcpy(result,"up_pass_error|密保错误！");
     }
     send(clientFd,&result,sizeof(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
-void getUserInfo(int clientFd,char message[buffSize])
+void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
     char uid[1024]={0},token[1024]={0};
     sscanf(message,"%[^|]|%s",uid,token);
-     bool a =checktoken(uid,token);
+    bool a =checktoken(uid,token);
     if(a)
     {ostringstream ostr;
-    ostr<<"SELECT nickname FROM user WHERE userid = '"<<uName<<"'";
+    ostr<<"SELECT nickname FROM user WHERE userid = '"<<uid<<"'";
     string sql=ostr.str();
     string nickname=database.query(sql);
     ostr.str("");
-    ostr<<"SELECT head_portrait_id FROM user WHERE userid = '"<<uName<<"'";
-    string sql=ostr.str();
+    ostr<<"SELECT head_portrait_id FROM user WHERE userid = '"<<uid<<"'";
+    sql=ostr.str();
     string hid=database.query(sql);
     ostr.str("");
-    ostr<<"SELECT signature FROM user WHERE userid = '"<<uName<<"'";
-    string sql=ostr.str();
+    ostr<<"SELECT signature FROM user WHERE userid = '"<<uid<<"'";
+    sql=ostr.str();
     string sig=database.query(sql);
     ostr.str("");
-    strcpy(result,"get_user_info|")
+    strcpy(result,"get_user_info|");
     strcat(result,nickname.c_str());
     strcat(result,"|");
-    strcat(result,hid.c_str);
-    strcat(result,""|"");
-    strcat(result,sig.c_str);}
+    strcat(result,hid.c_str());
+    strcat(result,"|");
+    strcat(result,sig.c_str());}
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
     }
