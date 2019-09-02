@@ -86,7 +86,7 @@ ii>dual with it
 4.1 发送消息
 
 0:SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 = uid1 AND member_id2 = uid2) OR (member_id1 = uid2 AND member_id2 = uid1);
-  INSERT INTO single_chat_history (poster_id,time,content) VALUES (uid1,time,data);
+  INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES (single_chat_info_id,uid1,time,data);
 
 1:SELECT member_id FROM group_chat_info WHERE group_chat_info_id = uid2 AND member_id = uid1;//find whether uid is in this group,if not,return error;
   INSERT INTO group_chat_history (group_chat_info_id,time,poster_id,content) VALUES (uid2,time,uid1,data);
