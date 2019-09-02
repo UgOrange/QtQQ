@@ -20,7 +20,7 @@
 using namespace std;
 list<int> clients_list;
 #define serverIP "39.107.105.182"
-#define serverPort 8888
+#define serverPort 8263
 #define epollSize 1000
 #define buffSize 0xFFFFF
 
