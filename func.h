@@ -453,6 +453,7 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
     char uid[1024]={0},token[1024]={0},uid1[1024]={0},request[1024]={0};
+    cout<<uid<<" "<<uid1<<" "<<request<<" "<<token<<endl;
     sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,request,token);
     bool a =checktoken(uid,token);
     if(a)
