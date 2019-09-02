@@ -1,1 +1,1 @@
-g++ Server.cc -L/usr/lib64/mysql -lmysqlclient -o ../server
+g++ Server.cc -L/usr/lib64/mysql -lmysqlclient -o ../server.o
