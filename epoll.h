@@ -90,6 +90,18 @@ int handleRecv(int clientFd)
         {
             Server.sendMessage(clientFd,message);
         }
+        else if(0==strcmp(type,"forget_passwd"))
+        {
+            Server.forgetPassWd(clientFd,message);
+        }
+        else if(0==strcmp(type,"get_user_info"))
+        {
+            Server.getUserInfo(clientFd,message);
+        }
+        else if(0==strcmp(type,"get_user_group"))
+        {
+            Server.getUserGroup(clientFd,message);
+        }
     }
     return 0;
 }

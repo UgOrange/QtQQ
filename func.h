@@ -340,7 +340,40 @@ void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
     send(clientFd,&result,sizeof(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
-void getUserGroup(int clientFd,char message[buffSize]);
+void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
+{
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"SELECT COUNT(group_chat_info_id) FROM group_chat_info WHERE member_id = '"<<uid<<"'";
+        string sql=ostr.str();
+        ostr.str("");
+        string groupCount=database.query(sql);
+        stringstream ss;
+        ss<<groupCount;
+        int gCount;
+        ss>>gCount;
+        ostr<<"SELECT group_chat_info_id FROM group_chat_info WHERE member_id = '"<<uid<<"'";
+        sql=ostr.str();
+        strcpy(result,"groupinfo|");
+        strcat(result,groupCount.c_str());
+        for (int i=0;i<gCount;i++)
+        {
+            strcat(result,"|");
+            string groupid=database.query(sql,i);
+            strcat(result,groupid.c_str());
+        }
+    }
+    else{
+        strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,sizeof(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
 void getGroupInfo(int clientFd,char message[buffSize]);
 void addFriend(int clientFd,char message[buffSize]);
 void delFriend(int clientFd,char message[buffSize]);

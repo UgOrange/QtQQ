@@ -20,7 +20,8 @@ private:
 public:
     SqlServer();
     void connectMysql(char *ip,char * user,char* password,char* database);   //连接数据库
-    string query(string sql);    //执行sql语句接口
+    string query(string sql);   
+    string query(string sql,int i);   //执行sql语句接口
     string queryFriend(string sql);
     bool query_sql(string sql);
 };
@@ -119,6 +120,45 @@ string SqlServer::query(string sql)
             {
               //  cout<<"line58"<<endl;
                 temp = result_row[0];
+            }
+            mysql_free_result(res_ptr);
+            
+        }
+        else{
+            //查询结果空
+            return temp; 
+        }
+
+    //}   
+    //else{
+        //perror("my_query");
+        //mysql_close(connect);
+        //exit(0);
+    //}
+    return temp;
+    
+}
+string SqlServer::query(string sql,int i)
+{
+    string temp = "error";
+   cout<<"line44 sql.data "<<sql.data()<<endl<<connect<<endl;;
+    //传入sql语句，将查询结果以char×返回
+    //if(!mysql_query(connect,sql.data()))
+    //{
+        //把查询结果给res_ptr
+        mysql_query(connect,sql.data());
+        res_ptr = mysql_store_result(connect);
+        //cout<<"line49"<<endl;
+        //如果结果不为空,则输出
+        if(res_ptr!=NULL)
+        {
+            //cout<<"line53"<<endl;
+            //cout<<"chax xun hao"<<endl;
+            result_row = mysql_fetch_row(res_ptr);
+            if(result_row!=NULL)
+            {
+              //  cout<<"line58"<<endl;
+                temp = result_row[i];
             }
             mysql_free_result(res_ptr);
             
