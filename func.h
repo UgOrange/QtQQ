@@ -118,7 +118,7 @@ void ServerFunc::reg(int clientFd,char message[buffSize])
         else
         strcpy(result,"register_error|注册失败！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::login(int clientFd,char message[buffSize])
@@ -168,7 +168,7 @@ void ServerFunc::login(int clientFd,char message[buffSize])
     else{
         strcpy(result,"login_error|用户名或密码错误！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::updateProfile(int clientFd,char message[buffSize])
@@ -194,7 +194,7 @@ void ServerFunc::updateProfile(int clientFd,char message[buffSize])
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::LoadFriend(int clientFd,char message[buffSize])
@@ -235,7 +235,7 @@ void ServerFunc::LoadFriend(int clientFd,char message[buffSize])
     {
         strcpy(result1_char,"get_user_friend|您无权进行此操作！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result1_char<<endl;
 }
 void ServerFunc::sendMessage(int clientFd,char message[buffSize])
@@ -278,7 +278,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
     {
         strcpy(result1,"update_profile_error|token错误，请重新登录！");
     }
-    send(clientFd,&result1,sizeof(result),0);
+    send(clientFd,&result1,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
 }
 void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
@@ -305,7 +305,7 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
     else{
         strcpy(result,"up_pass_error|密保错误！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
@@ -337,7 +337,7 @@ void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
@@ -371,13 +371,43 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
     }
-    send(clientFd,&result,sizeof(result),0);
+    send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
-void getGroupInfo(int clientFd,char message[buffSize]);
-void addFriend(int clientFd,char message[buffSize]);
-void delFriend(int clientFd,char message[buffSize]);
-void confirmFriendRequest(int clientFd,char message[buffSize]);
-void createGroup(int clientFd,char message[buffSize]);
-void joinGroup(int clientFd,char message[buffSize]);
+void ServerFunc::getGroupInfo(int clientFd,char message[buffSize])
+{
+    char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+
+    }
+    else{
+        strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::addFriend(int clientFd,char message[buffSize])
+{
+
+}
+void ServerFunc::delFriend(int clientFd,char message[buffSize])
+{
+
+}
+void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
+{
+
+}
+void ServerFunc::createGroup(int clientFd,char message[buffSize])
+{
+
+}
+void ServerFunc::joinGroup(int clientFd,char message[buffSize])
+{
+
+}
 #endif
