@@ -542,7 +542,7 @@ void ServerFunc::getGroupInfo(int clientFd,char message[buffSize])
 void ServerFunc::addFriend(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0},uid1[1024]={0},request[1024]={0};
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0},request[1024]={0},result1[1024]={0};
     cout<<uid<<" "<<uid1<<" "<<request<<" "<<token<<endl;
     sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,uid1,request,token);
     bool a =checktoken(uid,token);
@@ -555,6 +555,28 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
         ostr.str("");
         if(a)
         {
+            std::stringstream ss;
+            ss<<uid1;
+            int useruid;
+            ss>>useruid;
+            cout<<"UserUid is "<<useruid<<endl;
+            iter=userlist.find(useruid);
+            strcpy(result1,"friend_request|")
+            strcat(result1,uid);
+            strcat(result1,"|");
+            strcat(result1,request);
+        if(iter!=userlist.end())
+        {   
+            send(iter->second,&result,strlen(result),0);
+            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<endl;
+            strcpy(result1,"send_message_succ|发送成功！");
+            bzero(result1,sizeof(result1));
+        }
+        else//对方离线=database.query_sql(
+        {
+            cout<<"user is not login!!"<<endl;
+            strcpy(result1,"add_friend_succ|对方离线！");
+        }
             strcpy(result,"add_friend_succ|已发送请求！");
         }
         else
