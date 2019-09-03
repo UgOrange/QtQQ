@@ -162,7 +162,7 @@ void ServerFunc::login(int clientFd,char message[buffSize])
             ss<<uid;
             int useruid;
             ss>>useruid;
-            userlist.insert(map<int, int>::value_type(useruid,clientFd));
+            userlist[useruid]=clientFd;
             cout<<"User "<<uName<<"is login,uid is "<<useruid<<endl;
         }
         else{
