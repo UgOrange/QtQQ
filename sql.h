@@ -113,12 +113,12 @@ string SqlServer::query(string sql)
         {
             //cout<<"line53"<<endl;
             //cout<<"chax xun hao"<<endl;
-            result_row = mysql_fetch_row(res_ptr);
-            if(result_row!=NULL)
+            while(result_row = mysql_fetch_row(res_ptr))
+            {if(result_row!=NULL)
             {
               //  cout<<"line58"<<endl;
                 temp = result_row[0];
-            }
+            }}
             mysql_free_result(res_ptr);
             
         }
@@ -155,7 +155,6 @@ string SqlServer::query(string sql,int i)
             result_row = mysql_fetch_row(res_ptr);
             if(result_row!=NULL)
             {
-              //  cout<<"line58"<<endl;
                 temp = result_row[i];
             }
             mysql_free_result(res_ptr);
