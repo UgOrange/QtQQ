@@ -584,8 +584,8 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
             strcat(result1,request);
         if(iter!=userlist.end())
         {   
-            int aa=send(iter->second,&result1,strlen(result),0);
-            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<" return is "<<aa<<endl;
+            int aa=send(iter->second,&result1,strlen(result1),0);
+            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<" return is "<<aa<<" strlen is "<<strlen(result)<<endl;
 
             strcpy(result,"send_message_succ|发送成功！");
         }
