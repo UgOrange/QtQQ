@@ -801,7 +801,7 @@ void ServerFunc::getUnreadFriendRequest(int clientFd,char message[buffSize])
     {
 
         ostringstream ostr;
-        ostr<<"SELECT COUNT(applicant_id) FROM friend_apply WHERE object_id = "<<uid<<"'";
+        ostr<<"SELECT COUNT(applicant_id) FROM friend_apply WHERE object_id = '"<<uid<<"'";
         string sql=ostr.str();
         ostr.str("");
         string countStr=database.query(sql);
@@ -811,10 +811,10 @@ void ServerFunc::getUnreadFriendRequest(int clientFd,char message[buffSize])
         strcat(result,countStr.c_str());
         for(int i=0;i<unreadCount;i++)
         {   strcat(result,"|");
-            ostr<<"SELECT applicant_id FROM friend_apply WHERE object_id = "<<uid<<"'";
+            ostr<<"SELECT applicant_id FROM friend_apply WHERE object_id = '"<<uid<<"'";
             string sql=ostr.str();
             ostr.str("");
-            uidd=database.query(sql);ostr<<"SELECT friend_apply_message FROM friend_apply WHERE object_id = "<<uid<<"'";
+            uidd=database.query(sql);ostr<<"SELECT friend_apply_message FROM friend_apply WHERE object_id = '"<<uid<<"'";
             sql=ostr.str();
             ostr.str("");
             request=database.query(sql);
