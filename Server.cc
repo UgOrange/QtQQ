@@ -23,6 +23,7 @@ int main()
     printf("epoll created, epollfd = %d\n", epfd);
     static struct epoll_event events[epollSize];//往内核事件表里添加事件
     addFd(epfd, listener, true);
+        ServerFunc Server;
     while(1)
     {
         int epollEventCount=epoll_wait(epfd,events,epollSize,-1);

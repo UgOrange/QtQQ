@@ -55,7 +55,7 @@ int handleRecv(int clientFd)
     char type[20]={0};
     printf("read from client(clientID = %d)\n", clientFd);
     int len = recv(clientFd, bufRecv, buffSize, 0);
-    ServerFunc Server;
+
     if(len == 0)  // len = 0 means the client closed connection
     {
         close(clientFd);
