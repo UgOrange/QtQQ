@@ -683,7 +683,7 @@ void ServerFunc::createGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO group_chat_info (member_id,group_chat_name,group_chat_admin,group_chat_manager) VALUES ('"<<uid<<"','"<<groupName<<"','"<<"1,1)";
+        ostr<<"INSERT INTO group_chat_info (member_id,group_chat_name,group_chat_admin,group_chat_manager) VALUES ('"<<uid<<"','"<<groupName<<"',"<<"1,1)";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
