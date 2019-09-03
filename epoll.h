@@ -23,6 +23,8 @@ list<int> clients_list;
 #define serverPort 8263
 #define epollSize 1000
 #define buffSize 0xFFFFF
+ServerFunc Server;
+
 
 
 #include <time.h>

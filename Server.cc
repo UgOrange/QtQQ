@@ -1,5 +1,6 @@
 #include "epoll.h"
 #include <mysql/mysql.h>
+map<int,int> userlist;
 //高并发
 int main()
 {
