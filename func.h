@@ -174,7 +174,7 @@ void ServerFunc::login(int clientFd,char message[buffSize])
     }
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
-    iter = m.begin();
+    iter = userlist.begin();
     while(iter != userlist.end()){
         cout << iter->first << "-" << iter->second << endl;
         iter++;
