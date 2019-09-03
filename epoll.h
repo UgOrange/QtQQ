@@ -141,6 +141,22 @@ int handleRecv(int clientFd)
         {
             Server.handleGroupRequest(clientFd,message);
         }
+        else if(0==strcmp(type,"get_unread_friend_request"))
+        {
+            Server.getUnreadFriendRequest(clientFd,message);
+        }
+        else if(0==strcmp(type,"get_unread_group_request"))
+        {
+            Server.getUnreadGroupRequest(clientFd,message);
+        }
+        else if(0==strcmp(type,"get_unread_message"))
+        {
+            Server.getUnreadMessage(clientFd,message);
+        }
+        else if(0==strcmp(type,"send_file"))
+        {
+            Server.sendFile(clientFd,message);
+        }
         else
         {
             cout<<"not find matched func!!!!"<<endl;
