@@ -162,9 +162,8 @@ void ServerFunc::login(int clientFd,char message[buffSize])
             ss<<uid;
             int useruid;
             ss>>useruid;
-            cout<<
             userlist.insert(map<int, int>::value_type(useruid,clientFd));
-            cout<<"User "<<uName<<" is login,uid is "<<useruid<<endl;
+            cout<<"User "<<uName<<"is login,uid is "<<useruid<<endl;
         }
         else{
              strcpy(result,"login_error|登录失败！");
@@ -175,7 +174,7 @@ void ServerFunc::login(int clientFd,char message[buffSize])
     }
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
-      while(iter != userlist.end()){
+          while(iter != userlist.end()){
         cout << iter->first << "-" << iter->second << endl;
         iter++;
     }

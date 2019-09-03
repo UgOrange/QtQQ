@@ -48,7 +48,7 @@ bool SqlServer::query_sql(string sql)
     else{
         cout<<"执行sql出错"<<endl;
     }
-
+    return false;
 
 }
 string SqlServer::queryFriend(string sql)
