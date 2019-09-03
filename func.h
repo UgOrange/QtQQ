@@ -495,10 +495,12 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
         sql=ostr.str();
         strcpy(result,"groupinfo|");
         strcat(result,groupCount.c_str());
+        string groupid;
         for (int i=0;i<gCount;i++)
         {
             strcat(result,"|");
-            string groupid=database.query(sql,i);
+            groupid=database.query(sql,i);
+            cout<<groupid<<endl;
             strcat(result,groupid.c_str());
         }
     }
