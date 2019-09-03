@@ -182,6 +182,12 @@ void ServerFunc::login(int clientFd,char message[buffSize])
     strcpy(result,"friend_request|00125|request");
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+        strcpy(result,"friend_request|00125|request");
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+        strcpy(result,"friend_request|00125|request");
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::logout(int clientFd)
 {
@@ -243,28 +249,31 @@ void ServerFunc::LoadFriend(int clientFd,char message[buffSize])
         ostr<<"SELECT COUNT(friend_id) FROM friend_info WHERE userid = '"<<uid<<"'";
         string sql1 = ostr.str();
         result1=database.query(sql1);
-        strcpy(result1_char,result1.c_str());
-        if(result1_char[0]=='0'){
+        stringstream ss;
+        ss<<result1;
+        int friendcount;
+        ss>>friendcount;
+        if(friendcount==0){
             strcpy(result,"get_user_friend|您暂时没有好友！");
-            return;
         }
         ostringstream ostr1;
         ostr1<<"SELECT friend_id FROM friend_info WHERE userid = '"<<uid<<"'";
         string sql2 = ostr1.str();
-        mysql_query(&mysql,sql2.data());
-        result_sql = mysql_store_result(&mysql);
-        while(row = mysql_fetch_row(result_sql))
+        strcpy(result,"friendinfo|");
+        strcat(result,result1.c_str());
+        for(int i=0;i<friendcount;i++)
         {
-            strcat(result1_char,"|");
-            strcat(result1_char,row[0]);
+            strcat(result,"|");
+            string uidd=database.query(sql2,i);
+            strcat(result,uidd.c_str());
         }
     }
     else 
     {
-        strcpy(result1_char,"get_user_friend|您无权进行此操作！");
+        strcpy(result,"get_user_friend|您无权进行此操作！");
     }
     send(clientFd,&result,strlen(result),0);
-    cout<<"发送给id="<<clientFd<<" data is :"<<result1_char<<endl;
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::sendMessage(int clientFd,char message[buffSize])
 {
