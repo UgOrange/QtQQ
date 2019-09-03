@@ -138,6 +138,7 @@ string SqlServer::query(string sql)
 }
 string SqlServer::query(string sql,int i)
 {
+    i++;
     string temp = "error";
    cout<<"line44 sql.data "<<sql.data()<<endl<<connect<<endl;;
     //传入sql语句，将查询结果以char×返回
