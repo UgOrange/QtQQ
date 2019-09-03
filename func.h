@@ -179,6 +179,9 @@ void ServerFunc::login(int clientFd,char message[buffSize])
         cout << iter->first << "-" << iter->second << endl;
         iter++;
     }
+    strcpy(result,"friend_request|00125|request");
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
 }
 void ServerFunc::logout(int clientFd)
 {
