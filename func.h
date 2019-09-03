@@ -45,7 +45,10 @@ class ServerFunc{
             void createGroup(int clientFd,char message[buffSize]);
             void joinGroup(int clientFd,char message[buffSize]);
             void handleGroupRequest(int clientFd,char message[buffSize]);
-            
+            void getUnreadFriendRequest(int clientFd,char message[buffSize]);
+            void getUnreadGroupRequest(int clientFd,char message[buffSize]);
+            void getUnreadMessage(int clientFd,char message[buffSize]);
+            void sendFile(int clientFd,char message[buffSize]);
 
 };
 
@@ -520,7 +523,7 @@ void ServerFunc::getGroupInfo(int clientFd,char message[buffSize])
         ss<<count1;
         int mCount;
         ss>>mCount;
-        strcpy(result,"groupinfo|");
+        strcpy(result,"group_detail_info|");
         strcat(result,groupid);
         strcat(result,"|");
         strcat(result,groupName.c_str());
@@ -695,7 +698,7 @@ void ServerFunc::createGroup(int clientFd,char message[buffSize])
 }
 void ServerFunc::joinGroup(int clientFd,char message[buffSize])
 {
-    char result[buffSize]={0};
+    char result[buffSize]={0},result1[buffSize]={0};
     char uid[1024]={0},token[1024]={0},groupId[1024]={0},request[1024]={0};
     sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,groupId,request,token);
     bool a =checktoken(uid,token);
@@ -708,7 +711,27 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
         ostr.str("");
         if(a)
         {
-            strcpy(result,"join_group_succ|已发送请求！");
+            ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_admin = 1 AND group_chat_info_id = '"<<groupId<<"'";
+            sql=ostr.str();
+            string adminidstr=database.query(sql);
+            int adminid=stoi(adminidstr);
+            iter=userlist.find(adminid);
+            if(iter!=userlist.end())
+            {
+                strcpy(result1,"group_request|");
+                strcat(result1,uid);
+                strcat(result1,"|");
+                strcat(result1,request);
+                strcpy(result1,"join_group_succ|已发送请求！");
+                send(iter->second,&result1,strlen(result1),0);
+                cout<<"发送给id="<<iter->second<<" data is :"<<result1<<endl;
+            }
+            else
+            {
+                strcpy(result,"join_group_error|群主离线！");
+            }
+            
+            
         }
         else
         {
@@ -724,9 +747,9 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
 void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0},flag[4]={0},groupid[1024]={0};
-    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,groupid,flag,token);
-    bool a =checktoken(uid,token);
+    char uid[1024]={0},token[1024]={0},flag[4]={0},groupid[1024]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%[^|]|%s",uid1,uid,groupid,flag,token);
+    bool a =checktoken(uid1,token);
     if(a)
     {  
             ostringstream ostr;
@@ -751,6 +774,208 @@ void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
     }
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::getUnreadFriendRequest(int clientFd,char message[buffSize])
+{
+     char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+
+        ostringstream ostr;
+        ostr<<"SELECT COUNT(applicant_id) FROM friend_apply WHERE object_id = "<<uid<<"'";
+        string sql=ostr.str();
+        ostr.str("");
+        string countStr=database.query(sql);
+        int unreadCount=stoi(countStr);
+        string uidd,request;
+        strcpy(result,"unread_friend_request|");
+        strcat(result,countStr.c_str());
+        for(int i=0;i<unreadCount;i++)
+        {   strcat(result,"|");
+            ostr<<"SELECT applicant_id FROM friend_apply WHERE object_id = "<<uid<<"'";
+            string sql=ostr.str();
+            ostr.str("");
+            uidd=database.query(sql);ostr<<"SELECT friend_apply_message FROM friend_apply WHERE object_id = "<<uid<<"'";
+            sql=ostr.str();
+            ostr.str("");
+            request=database.query(sql);
+            strcat(result,uidd.c_str());
+            strcat(result,"|");
+            strcat(result,request.c_str());
+        }     
+    }
+    else
+    {
+       strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+}
+void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
+{
+        char result[buffSize]={0};
+    char uid[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"SELECT COUNT(*) FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+        string sql=ostr.str();
+        ostr.str("");
+        string countStr=database.query(sql);
+        int unreadCount=stoi(countStr);
+        string uidd,request;
+        strcpy(result,"unread_friend_request|");
+        strcat(result,countStr.c_str());
+        for(int i=0;i<unreadCount;i++)
+        {   strcat(result,"|");
+            ostr<<"SELECT applicant_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            sql=ostr.str();
+            string applyId=database.query(sql);
+            ostr.str("");
+            ostr<<"SELECT group_chat_info_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            sql=ostr.str();
+            ostr.str("");
+            string groupID=database.query(sql);
+            ostr<<"SELECT group_chat_management_message FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            string sql=ostr.str();
+            ostr.str("");
+            request=database.query(sql);
+            strcat(result,applyId.c_str());
+            strcat(result,"|");
+            strcat(result,groupID.c_str());
+            strcat(result,"|");
+            strcat(result,request.c_str());
+        }     
+    }
+    else
+    {
+       strcpy(result,"update_profile_error|token错误，请重新登录！");
+    }
+    send(clientFd,&result,strlen(result),0);
+    cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+    }
+void ServerFunc::getUnreadMessage(int clientFd,char message[buffSize])
+{
+        char result[buffSize]={0},result1[buffSize]={0};
+    char uid[1024]={0},token[1024]={0};
+    sscanf(message,"%[^|]|%s",uid,token);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        ostringstream ostr;
+        ostr<<"SELECT COUNT(poster_id) FROM temperary_message,user  WHERE temperary_message.poster_id = user.userid AND recv_id ='"<<uid<<"' ORDER BY temperary_message.time DESC";
+        string sql=ostr.str();
+        ostr.str("");
+        string countp2p=database.query(sql);
+        int unreadCount=stoi(countp2p);
+        string uidd,request;
+
+        for(int i=0;i<unreadCount;i++)
+        {     
+            strcpy(result1,"unread_message|0|");
+            
+            ostr<<"SELECT user.userid FROM temperary_message,user  WHERE temperary_message.poster_id = user.userid AND recv_id ='"<<uid<<"' ORDER BY temperary_message.time DESC";
+            string sql=ostr.str();
+            ostr.str("");
+            uidd=database.query(sql);
+            ostr<<"SELECT content FROM temperary_message,user  WHERE temperary_message.poster_id = user.userid AND recv_id ='"<<uid<<"' ORDER BY temperary_message.time DESC";
+            sql=ostr.str();
+            ostr.str("");
+            request=database.query(sql);
+            ostr<<"SELECT time FROM temperary_message,user  WHERE temperary_message.poster_id = user.userid AND recv_id ='"<<uid<<"' ORDER BY temperary_message.time DESC";
+            sql=ostr.str();
+            ostr.str("");
+            string time=database.query(sql);
+            strcat(result1,uidd.c_str());
+            strcat(result1,"|");
+            strcat(result1,time.c_str());
+            strcat(result1,"|");
+            strcat(result1,request.c_str());
+            send(clientFd,&result1,strlen(result1),0);
+            cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
+        }
+        ostr<<"SELECT COUNT(group_chat_info_id) FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+        sql=ostr.str();
+        ostr.str("");
+        countp2p=database.query(sql);
+        unreadCount=stoi(countp2p);
+
+        for(int i=0;i<unreadCount;i++)
+        {     
+            strcpy(result1,"unread_message|1|");
+            
+            ostr<<"SELECT group_chat_info_id FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            string sql=ostr.str();
+            ostr.str("");
+            uidd=database.query(sql);
+            ostr<<"SELECT content FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            sql=ostr.str();
+            ostr.str("");
+            request=database.query(sql);
+            ostr<<"SELECT time FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            sql=ostr.str();
+            ostr.str("");
+            string time=database.query(sql);
+            strcat(result1,uidd.c_str());
+            strcat(result1,"|");
+            strcat(result1,time.c_str());
+            strcat(result1,"|");
+            strcat(result1,request.c_str());
+            send(clientFd,&result1,strlen(result1),0);
+            cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
+        }  
+
+            ostr<<"DELETE FROM temperary_message WHERE recv_id = '"<<uid<<"'";
+            sql=ostr.str();
+            database.query_sql(sql);    
+    }
+    else
+    {
+       strcpy(result,"update_profile_error|token错误，请重新登录！");
+           send(clientFd,&result,strlen(result),0);
+        cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+    }
+
+}
+void ServerFunc::sendFile(int clientFd,char message[buffSize])
+{
+    char result[buffSize]={0},result1[buffSize];
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0},el[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,token,uid1,el);
+    bool a =checktoken(uid,token);
+    if(a)
+    {
+        stringstream ss;
+        ss<<uid1;
+        int receuid;
+        ss>>receuid;
+        iter=userlist.find(receuid);
+        if(iter!=userlist.end())
+        {
+            strcpy(result1,"file|");
+            strcat(result1,uid);
+            strcat(result1,el);
+            send(iter->second,&result1,strlen(result1),0);
+            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<endl;
+            strcpy(result,"send_file|已发送请求");
+        }
+        else
+        {
+            strcpy(result,"send_file|对方离线");
+        }
+        
+    }
+    else
+    {
+       strcpy(result,"update_profile_error|token错误，请重新登录！");
     }
     send(clientFd,&result,strlen(result),0);
     cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
