@@ -167,7 +167,7 @@ void ServerFunc::login(int clientFd,char message[buffSize])
         countp2p=database.query(sqll);
         unreadCount=stoi(countp2p);
             int i;
-            string str11="login_succ|"+"登录成功！"+uid+"|"+token+"|"+to_string(unreadCount);
+            string str11="login_succ|"+(string)"登录成功！"+uid+"|"+token+"|"+to_string(unreadCount);
             for( i=0;i<str11.length();i++)
                 result[i] = str11[i];
                 result[i] = '\0';
