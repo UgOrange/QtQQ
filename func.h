@@ -161,11 +161,11 @@ void ServerFunc::login(int clientFd,char message[buffSize])
         ostr.str("");
         string countp2p=database.query(sqll);
         int unreadCount=stoi(countp2p);
-        ostr<<"SELECT COUNT(group_chat_info_id) FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+        ostr<<"SELECT COUNT(group_chat_info.group_chat_info_id) FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
         sqll=ostr.str();
         ostr.str("");
         countp2p=database.query(sqll);
-        unreadCount+=stoi(countp2p);
+        unreadCount=stoi(countp2p);
             int i;
             string str11="login_succ|"+uid+"|"+token+to_string(unreadCount);
             for( i=0;i<str11.length();i++)
