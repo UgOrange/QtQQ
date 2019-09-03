@@ -585,15 +585,14 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
         if(iter!=userlist.end())
         {   
             int aa=send(iter->second,&result1,strlen(result),0);
-            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<"return is "<<aa<<endl;
+            cout<<"发送给id="<<iter->second<<" data is :"<<result1<<" return is "<<aa<<endl;
 
-            strcpy(result1,"send_message_succ|发送成功！");
-            bzero(result1,sizeof(result1));
+            strcpy(result,"send_message_succ|发送成功！");
         }
         else//对方离线=database.query_sql(
         {
             cout<<"user is not login!!"<<endl;
-            strcpy(result1,"add_friend_succ|对方离线！");
+            strcpy(result,"add_friend_succ|对方离线！");
         }
             strcpy(result,"add_friend_succ|已发送请求！");
         }
