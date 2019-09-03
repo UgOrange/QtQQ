@@ -483,7 +483,7 @@ void ServerFunc::getUserGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"SELECT COUNT(group_chat_info_id=database.query_sql( FROM group_chat_info WHERE member_id = '"<<uid<<"'";
+        ostr<<"SELECT COUNT(group_chat_info_id=database.query_sql( FROM group_chat_info WHERE member_id = '"<<uid<<"')";
         string sql=ostr.str();
         ostr.str("");
         string groupCount=database.query(sql);
