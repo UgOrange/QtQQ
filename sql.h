@@ -47,8 +47,6 @@ bool SqlServer::query_sql(string sql)
     }
     else{
         cout<<"执行sql出错"<<endl;
-        mysql_close(connect);
-        exit(0);
     }
 
 
