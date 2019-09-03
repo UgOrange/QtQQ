@@ -149,33 +149,6 @@ LOCK TABLES `group_chat_management` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `group_chat_temperary_message`
---
-
-DROP TABLE IF EXISTS `group_chat_temperary_message`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `group_chat_temperary_message` (
-  `poster_id` int(5) NOT NULL,
-  `recv_id` int(5) NOT NULL,
-  `content` varchar(200) DEFAULT NULL,
-  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  `read` tinyint(1) DEFAULT '0',
-  `group_chat_info_id` int(11) NOT NULL,
-  PRIMARY KEY (`poster_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `group_chat_temperary_message`
---
-
-LOCK TABLES `group_chat_temperary_message` WRITE;
-/*!40000 ALTER TABLE `group_chat_temperary_message` DISABLE KEYS */;
-/*!40000 ALTER TABLE `group_chat_temperary_message` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `photo`
 --
 
@@ -252,6 +225,31 @@ INSERT INTO `single_chat_info` VALUES (00000000111,123,321),(00000000112,321,123
 UNLOCK TABLES;
 
 --
+-- Table structure for table `temperary_message`
+--
+
+DROP TABLE IF EXISTS `temperary_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `temperary_message` (
+  `poster_id` int(5) NOT NULL,
+  `recv_id` int(5) NOT NULL,
+  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `content` varchar(200) NOT NULL,
+  `group_chat_info_id` int(11) unsigned zerofill NOT NULL DEFAULT '00000000000'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `temperary_message`
+--
+
+LOCK TABLES `temperary_message` WRITE;
+/*!40000 ALTER TABLE `temperary_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `temperary_message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user`
 --
 
@@ -312,4 +310,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-02 17:02:17
+-- Dump completed on 2019-09-03  9:36:07

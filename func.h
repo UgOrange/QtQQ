@@ -417,24 +417,30 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
 void ServerFunc::getUserInfo(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0};
-    sscanf(message,"%[^|]|%s",uid,token);
+    char uid[1024]={0},token[1024]={0},uid1[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%s",uid,uid1,token);
     bool a =checktoken(uid,token);
     if(a)
     {ostringstream ostr;
-    ostr<<"SELECT nickname FROM user WHERE userid = '"<<uid<<"'";
+    ostr<<"SELECT nickname FROM user WHERE userid = '"<<uid1<<"'";
     string sql=ostr.str();
     string nickname=database.query(sql);
     ostr.str("");
-    ostr<<"SELECT head_portrait_id FROM user WHERE userid = '"<<uid<<"'";
+    ostr<<"SELECT head_portrait_id FROM user WHERE userid = '"<<uid1<<"'";
     sql=ostr.str();
     string hid=database.query(sql);
     ostr.str("");
-    ostr<<"SELECT signature FROM user WHERE userid = '"<<uid<<"'";
+    ostr<<"SELECT signature FROM user WHERE userid = '"<<uid1<<"'";
     sql=ostr.str();
     string sig=database.query(sql);
     ostr.str("");
+    if(!strcmp(uid,uid1))
     strcpy(result,"userinfo|");
+    else
+    {
+        strcpy(result,"friend_detail_info|");
+    }
+    
     strcat(result,nickname.c_str());
     strcat(result,"|");
     strcat(result,hid.c_str());
