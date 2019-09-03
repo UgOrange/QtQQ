@@ -282,9 +282,6 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             ss>>useruid;
             cout<<"UserUid is "<<useruid<<endl;
         iter=userlist.find(useruid);
-        //TODO:add database
-        if(iter!=userlist.end())
-        {   
             ostringstream ostr;
             ostr<<"SELECT single_chat_info_id FROM single_chat_info WHERE (member_id1 ='"<<uid1<<"' AND member_id2 = '"<<uid2<<"') OR (member_id1 = '"<<uid2<<"' AND member_id2 = '"<<uid1<<"')";
             string sql=ostr.str();
@@ -293,6 +290,10 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             ostr<<"INSERT INTO single_chat_history (chat_info_id,poster_id,time,content) VALUES ('"<<single_chat_info_id<<"','"<<uid1<<"','"<<time<<"','"<<data<<"')";
             sql=ostr.str();
             bool a=database.query_sql(sql);
+        //TODO:add database
+        if(iter!=userlist.end())
+        {   
+
             send(iter->second,&result,strlen(result),0);
             cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
             strcpy(result1,"send_message_succ|发送成功！");
@@ -300,8 +301,12 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
         }
         else//对方离线=database.query_sql(
         {
-
+            ostr.str("");
+            ostr<<"INSERT INTO temperary_message (poster_id,recv_id,time,content) VALUES ('"<<uid1<<"','"<<uid2<<"',"<<"','"<<time<<"','"<<data<<"')";
+            sql=ostr.str();
+            database.query_sql(sql);
             cout<<"user is not login!!"<<endl;
+            strcpy(result1,"send_message_succ|对方离线！");
         }
 
         }
@@ -318,9 +323,13 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
         int mCount;
         ss>>mCount;
         ostr.str("");
-        ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_info_id ='"<<uid2<<"' AND group_chat_admin = 0";
+        ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_info_id ='"<<uid2<<"'";
         sql=ostr.str();
         int uidtest;
+        ostringstream ostr1;
+        ostr1<<" INSERT INTO group_chat_history (group_chat_info_id,time,poster_id,content) VALUES ('"<<uid2<<"','"<<time<<"','"<<uid1<<"','"<<data<<"');";
+        string sql1=ostr1.str();
+        database.query_sql(sql1);
         for (int i=0;i<mCount-1;i++)
         {
             ss.str("");
@@ -328,6 +337,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             ss<<count1;
             ss>>uidtest;
             cout<<"UserUid is "<<uidtest<<endl;
+
             iter=userlist.find(uidtest);
             if(iter!=userlist.end())
             {
@@ -340,11 +350,23 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
                 strcat(result,"|");
                 strcat(result,data);
                 send(iter->second,&result,strlen(result),0);
-                cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
+                if(iter->second==clientFd)
+                {
+                }
+                else
+                {
+                    cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
+                }
+                strcpy(result1,"send_message_succ|发送成功！");
+               
             }
             else
             {
-                /* code */
+                ostringstream ostr2;
+                ostr1<<"  INSERT INTO temperary_message(poster_id,recv_id,time,content) VALUES ('"<<uid1<<"','"<<time<<"','"<<uidd<<"','"<<data<<"');";
+                string sql1=ostr1.str();
+                database.query_sql(sql1);
+                strcpy(result1,"send_message_succ|发送成功！");
             } 
         }
         }
