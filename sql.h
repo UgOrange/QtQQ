@@ -113,12 +113,12 @@ string SqlServer::query(string sql)
         {
             //cout<<"line53"<<endl;
             //cout<<"chax xun hao"<<endl;
-            while(result_row = mysql_fetch_row(res_ptr))
-            {if(result_row!=NULL)
+            result_row = mysql_fetch_row(res_ptr);
+            if(result_row!=NULL)
             {
               //  cout<<"line58"<<endl;
                 temp = result_row[0];
-            }}
+            }
             mysql_free_result(res_ptr);
             
         }
@@ -145,17 +145,21 @@ string SqlServer::query(string sql,int i)
     //{
         //把查询结果给res_ptr
         mysql_query(connect,sql.data());
-        res_ptr = mysql_store_result(connect);
+        res_ptr = mysql_use_result(connect);
         //cout<<"line49"<<endl;
         //如果结果不为空,则输出
         if(res_ptr!=NULL)
         {
             //cout<<"line53"<<endl;
             //cout<<"chax xun hao"<<endl;
-            result_row = mysql_fetch_row(res_ptr);
-            if(result_row!=NULL)
+            int j=0;
+            while((result_row = mysql_fetch_row(res_ptr))&&j!=i)
             {
-                temp = result_row[i];
+                if(result_row!=NULL)
+            {
+                temp = result_row[0];
+            }
+            j++;
             }
             mysql_free_result(res_ptr);
             
