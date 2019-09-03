@@ -561,7 +561,7 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
             ss>>useruid;
             cout<<"UserUid is "<<useruid<<endl;
             iter=userlist.find(useruid);
-            strcpy(result1,"friend_request|")
+            strcpy(result1,"friend_request|");
             strcat(result1,uid);
             strcat(result1,"|");
             strcat(result1,request);
