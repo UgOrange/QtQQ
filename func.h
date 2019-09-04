@@ -799,7 +799,7 @@ void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
             bool ret=database.query_sql(sql);
             ostr.str("");
             if(ret&&flag[0]=='0')
-            {ostr<<"INSERT INTO group_chat_info (member_id,group_chat_info_id) VALUES ('"<<uid1<<"','"<<groupid<<"')" ;
+            {ostr<<"INSERT INTO group_chat_info (member_id,group_chat_info_id) VALUES ('"<<uid<<"','"<<groupid<<"')" ;
             sql=ostr.str();
             string nickname=database.query(sql);
             ostr.str("");
