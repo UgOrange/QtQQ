@@ -80,7 +80,7 @@ DROP TABLE IF EXISTS `group_chat_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_chat_history` (
   `group_chat_info_id` int(11) NOT NULL,
-  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `time` varchar(64) NOT NULL,
   `read` varchar(45) NOT NULL DEFAULT '0',
   `poster_id` int(5) NOT NULL,
   `content` varchar(200) NOT NULL,
@@ -105,12 +105,10 @@ DROP TABLE IF EXISTS `group_chat_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_chat_info` (
-  `group_chat_info_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_chat_info_id` int(11) NOT NULL,
   `member_id` int(5) NOT NULL,
   `group_chat_name` varchar(45) DEFAULT NULL,
-  `group_chat_admin` tinyint(1) NOT NULL DEFAULT '0',
-  `group_chat_manager` varchar(45) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`group_chat_info_id`)
+  `group_chat_admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,7 +178,7 @@ DROP TABLE IF EXISTS `single_chat_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `single_chat_history` (
   `chat_info_id` int(11) NOT NULL,
-  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `time` varchar(64) NOT NULL,
   `photo` tinyint(1) NOT NULL,
   `read` tinyint(1) NOT NULL DEFAULT '0',
   `poster_id` int(5) unsigned zerofill NOT NULL,
@@ -233,7 +231,7 @@ DROP TABLE IF EXISTS `temperary_message`;
 CREATE TABLE `temperary_message` (
   `poster_id` int(5) NOT NULL,
   `recv_id` int(5) NOT NULL,
-  `time` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `time` varchar(64) NOT NULL,
   `content` varchar(200) NOT NULL,
   `group_chat_info_id` int(11) unsigned zerofill NOT NULL DEFAULT '00000000000'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -309,4 +307,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-04  9:54:10
+-- Dump completed on 2019-09-04 10:39:50

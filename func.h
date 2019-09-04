@@ -699,13 +699,18 @@ void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
 void ServerFunc::createGroup(int clientFd,char message[buffSize])
 {
     char result[buffSize]={0};
-    char uid[1024]={0},token[1024]={0},groupName[1024]={0};
-    sscanf(message,"%[^|]|%[^|]|%s",uid,groupName,token);
+    char uid[1024]={0},token[1024]={0},groupName[1024]={0},groupid[1024]={0};
+    sscanf(message,"%[^|]|%[^|]|%[^|]|%s",uid,groupName,groupid,token);
     bool a =checktoken(uid,token);
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO group_chat_info (member_id,group_chat_name,group_chat_admin,group_chat_manager) VALUES ('"<<uid<<"','"<<groupName<<"',"<<"1,1)";
+        ostr<<"SELECT * FROM group_chat_info WHERE group_chat_info_id = '"<<groupid<<"'";
+        string sql=ostr.str();
+        ostr.str("");
+        string rett=database.query(sql);
+        if(rett=="NULL")
+        {ostr<<"INSERT INTO group_chat_info (group_chat_info_id,member_id,group_chat_name,group_chat_admin) VALUES ('"<<groupid<<"','"<<uid<<"','"<<groupName<<"',"<<"1)";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
@@ -720,8 +725,14 @@ void ServerFunc::createGroup(int clientFd,char message[buffSize])
         }
         else
         {
-            strcpy(result,"create_group_error|groupid|群组创建失败！");
+            strcpy(result,"create_group_error|群组创建失败！");
         }
+        }
+        else
+        {
+            strcpy(result,"create_group_error|群号已被使用！");
+        }
+        
     }
     else{
         strcpy(result,"update_profile_error|token错误，请重新登录！");
@@ -859,7 +870,7 @@ void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"SELECT COUNT(*) FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+        ostr<<"SELECT COUNT(*) FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND group_chat_admin = 1";
         string sql=ostr.str();
         ostr.str("");
         string countStr=database.query(sql);
