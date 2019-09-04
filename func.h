@@ -849,7 +849,7 @@ void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
         string countStr=database.query(sql);
         int unreadCount=stoi(countStr);
         string uidd,request;
-        strcpy(result,"unread_friend_request|");
+        strcpy(result,"unread_group_request|");
         strcat(result,countStr.c_str());
         for(int i=0;i<unreadCount;i++)
         {   strcat(result,"|");
