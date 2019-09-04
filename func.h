@@ -877,18 +877,18 @@ void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
         strcat(result,countStr.c_str());
         for(int i=0;i<unreadCount;i++)
         {   strcat(result,"|");
-            ostr<<"SELECT applicant_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            ostr<<"SELECT applicant_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND group_chat_admin = 1";
             sql=ostr.str();
-            string applyId=database.query(sql);
+            string applyId=database.query(sql,i);
             ostr.str("");
-            ostr<<"SELECT group_chat_info_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            ostr<<"SELECT group_chat_info_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND  group_chat_admin = 1";
             sql=ostr.str();
             ostr.str("");
-            string groupID=database.query(sql);
-            ostr<<"SELECT group_chat_management_message FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            string groupID=database.query(sql,i);
+            ostr<<"SELECT group_chat_management_message FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_id AND member_id = '"<<uid<<"' AND  group_chat_admin = 1";
             string sql=ostr.str();
             ostr.str("");
-            request=database.query(sql);
+            request=database.query(sql,i);
             strcat(result,applyId.c_str());
             strcat(result,"|");
             strcat(result,groupID.c_str());
