@@ -794,7 +794,7 @@ void ServerFunc::handleGroupRequest(int clientFd,char message[buffSize])
     if(a)
     {  
             ostringstream ostr;
-            ostr<<"DELETE FROM group_chat_management WHERE group_chat_info_id = '"<<groupid<<"' AND applicant_id = '"<<uid<<"'" ;
+            ostr<<"DELETE FROM group_chat_management WHERE group_chat_id = '"<<groupid<<"' AND applicant_id = '"<<uid<<"'" ;
             string sql=ostr.str();
             bool ret=database.query_sql(sql);
             ostr.str("");
