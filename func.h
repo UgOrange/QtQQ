@@ -1013,6 +1013,7 @@ void ServerFunc::sendFile(int clientFd,char message[buffSize])
         {
             strcpy(result1,"file|");
             strcat(result1,uid);
+            strcat(result1,"|");
             strcat(result1,el);
             send(iter->second,&result1,strlen(result1),0);
             cout<<"发送给id="<<iter->second<<" data is :"<<result1<<endl;
