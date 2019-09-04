@@ -716,12 +716,9 @@ void ServerFunc::createGroup(int clientFd,char message[buffSize])
         ostr.str("");
         if(ret)
         {
-            ostr<<"SELECT group_chat_info_id FROM group_chat_info WHERE group_chat_name = '"<<groupName<<"'";
-            sql=ostr.str();
-            string groupId=database.query(sql);
             strcpy(result,"create_group_succ|");
-            strcat(result,groupId.c_str());
-            strcat(result,"|");
+            strcat(result,groupid);
+            strcat(result,"|群组创建成功");
         }
         else
         {
@@ -749,7 +746,7 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_info_id) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
+        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_info_id,group_chat_management_messages) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
