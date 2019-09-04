@@ -360,16 +360,19 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             cout<<"UserUid is "<<uidtest<<endl;
 
             iter=userlist.find(uidtest);
+            strcpy(result,"message|");
+            strcat(result,type);
+            strcat(result,"|");
+            strcat(result,uid2);
+            strcat(result,"|");
+            strcat(result,uid1);
+            strcat(result,"|");
+            strcat(result,time);
+            strcat(result,"|");
+            strcat(result,data);
             if(iter!=userlist.end())
             {
-                strcpy(result,"message|");
-                strcat(result,type);
-                strcat(result,"|");
-                strcat(result,uid1);
-                strcat(result,"|");
-                strcat(result,time);
-                strcat(result,"|");
-                strcat(result,data);
+                
                 send(iter->second,&result,strlen(result),0);
                 if(iter->second==clientFd)
                 {
@@ -385,7 +388,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
             else
             {
                 ostringstream ostr2;
-                ostr1<<"  INSERT INTO temperary_message(poster_id,recv_id,time,content) VALUES ('"<<uid1<<"','"<<time<<"','"<<uidd<<"','"<<data<<"');";
+                ostr1<<"  INSERT INTO temperary_message(poster_id,time,recv_id,content) VALUES ('"<<uid1<<"','"<<time<<"','"<<uidd<<"','"<<data<<"');";
                 string sql1=ostr1.str();
                 database.query_sql(sql1);
                 strcpy(result1,"send_message_succ|发送成功！");
