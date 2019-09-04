@@ -746,13 +746,13 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_info_id,group_chat_management_messages) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
+        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_id,group_chat_management_messages) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
         if(ret)
         {
-            ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_admin = 1 AND group_chat_info_id = '"<<groupId<<"'";
+            ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_admin = 1 AND group_chat_id = '"<<groupId<<"'";
             sql=ostr.str();
             string adminidstr=database.query(sql);
             int adminid=stoi(adminidstr);
