@@ -660,6 +660,10 @@ void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
             sql=ostr.str();
             string nickname=database.query(sql);
             ostr.str("");
+            ostr<<"INSERT INTO friend_info (userid,friend_id) VALUES ('"<<uid1<<"','"<<uid<<"')" ;
+            sql=ostr.str();
+            string nickname=database.query(sql);
+            ostr.str("");
             strcpy(result,"hand_friend_request_succ|成功同意请求！");
             }
             else if(ret&&flag[0]=='1')
