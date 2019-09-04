@@ -953,7 +953,12 @@ void ServerFunc::getUnreadMessage(int clientFd,char message[buffSize])
         ostr.str("");
         countp2p=database.query(sql);
         unreadCount=stoi(countp2p);
-
+        if(unreadCount==0)
+        {
+            strcpy(result,"no_unread_message|0");
+           send(clientFd,&result,strlen(result),0);
+        cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+        }
         for(int i=0;i<unreadCount;i++)
         {     
             strcpy(result1,"unread_message|1|");
