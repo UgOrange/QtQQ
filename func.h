@@ -763,7 +763,7 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
                 strcat(result1,uid);
                 strcat(result1,"|");
                 strcat(result1,request);
-                strcpy(result1,"join_group_succ|已发送请求！");
+                strcpy(result,"join_group_succ|已发送请求！");
                 send(iter->second,&result1,strlen(result1),0);
                 cout<<"发送给id="<<iter->second<<" data is :"<<result1<<endl;
             }
