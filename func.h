@@ -352,12 +352,11 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
         ostr1<<" INSERT INTO group_chat_history (group_chat_info_id,time,poster_id,content) VALUES ('"<<uid2<<"','"<<time<<"','"<<uid1<<"','"<<data<<"');";
         string sql1=ostr1.str();
         database.query_sql(sql1);
-        for (int i=0;i<mCount-1;i++)
+        string uidd;
+        for (int i=0;i<mCount;i++)
         {
-            ss.str("");
-            string uidd=database.query(sql,i);
-            ss<<count1;
-            ss>>uidtest;
+            uidd=database.query(sql,i);
+            uidtest=stoi(uidd);
             cout<<"UserUid is "<<uidtest<<endl;
 
             iter=userlist.find(uidtest);
@@ -374,6 +373,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
                 send(iter->second,&result,strlen(result),0);
                 if(iter->second==clientFd)
                 {
+                    cout<<"自己不发送！"<<endl;
                 }
                 else
                 {
