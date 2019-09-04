@@ -843,7 +843,7 @@ void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"SELECT COUNT(*) FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+        ostr<<"SELECT COUNT(*) FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
         string sql=ostr.str();
         ostr.str("");
         string countStr=database.query(sql);
@@ -853,15 +853,15 @@ void ServerFunc::getUnreadGroupRequest(int clientFd,char message[buffSize])
         strcat(result,countStr.c_str());
         for(int i=0;i<unreadCount;i++)
         {   strcat(result,"|");
-            ostr<<"SELECT applicant_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            ostr<<"SELECT applicant_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
             sql=ostr.str();
             string applyId=database.query(sql);
             ostr.str("");
-            ostr<<"SELECT group_chat_info_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            ostr<<"SELECT group_chat_info_id FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
             sql=ostr.str();
             ostr.str("");
             string groupID=database.query(sql);
-            ostr<<"SELECT group_chat_management_message FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_info_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
+            ostr<<"SELECT group_chat_management_message FROM group_chat_management,group_chat_info WHERE group_chat_info.group_chat_id = group_chat_management.group_chat_info_id AND member_id = '"<<uid<<"' AND (group_chat_admin = 1 OR group_chat_manager = 1)";
             string sql=ostr.str();
             ostr.str("");
             request=database.query(sql);
