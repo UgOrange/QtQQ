@@ -268,7 +268,7 @@ void ServerFunc::LoadFriend(int clientFd,char message[buffSize])
         strcat(result,result1.c_str());
         for(int i=0;i<friendcount;i++)
         {
-            strcat(result,"|");
+            strcat(result,"|00");
             string uidd=database.query(sql2,i);
             strcat(result,uidd.c_str());
         }

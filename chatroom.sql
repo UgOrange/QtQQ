@@ -83,8 +83,7 @@ CREATE TABLE `group_chat_history` (
   `time` varchar(64) NOT NULL,
   `read` varchar(45) NOT NULL DEFAULT '0',
   `poster_id` int(5) NOT NULL,
-  `content` varchar(200) NOT NULL,
-  PRIMARY KEY (`group_chat_info_id`)
+  `content` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -182,8 +181,7 @@ CREATE TABLE `single_chat_history` (
   `photo` tinyint(1) NOT NULL,
   `read` tinyint(1) NOT NULL DEFAULT '0',
   `poster_id` int(5) unsigned zerofill NOT NULL,
-  `content` varchar(200) NOT NULL,
-  PRIMARY KEY (`chat_info_id`)
+  `content` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -307,4 +305,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-04 10:39:50
+-- Dump completed on 2019-09-04 11:17:18
