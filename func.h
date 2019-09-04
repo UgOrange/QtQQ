@@ -746,7 +746,7 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_id,group_chat_management_messages) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
+        ostr<<"INSERT INTO group_chat_management (applicant_id,group_chat_id,group_chat_management_message) VALUES ('"<<uid<<"','"<<groupId<<"','"<<request<<"')";
         string sql=ostr.str();
         bool ret=database.query_sql(sql);
         ostr.str("");
