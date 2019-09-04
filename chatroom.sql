@@ -57,8 +57,7 @@ DROP TABLE IF EXISTS `friend_info`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `friend_info` (
   `friend_id` int(5) NOT NULL,
-  `userid` int(5) NOT NULL,
-  PRIMARY KEY (`userid`)
+  `userid` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -310,4 +309,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-03  9:36:07
+-- Dump completed on 2019-09-04  9:54:10

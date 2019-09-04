@@ -573,9 +573,14 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
     if(a)
     {
         ostringstream ostr;
-        ostr<<"INSERT INTO friend_apply (object_id,applicant_id,friend_apply_message) VALUES('"<<uid<<"','"<<uid1<<"','"<<request<<"')";
+        ostr<<"SELECT * FROM friend_info WHERE (userid = '"<<uid<<"' AND friend_id = '"<<uid1<<"') OR (userid = '"<<uid1<<"' AND friend_id = '"<<uid<<"')";
         string sql=ostr.str();
+        bool ret1=database.query_sql(sql);
+        if(ret1)
+        {ostr<<"INSERT INTO friend_apply (object_id,applicant_id,friend_apply_message) VALUES('"<<uid<<"','"<<uid1<<"','"<<request<<"')";
+        sql=ostr.str();
         bool ret=database.query_sql(sql);
+
         ostr.str("");
         if(a)
         {
@@ -607,6 +612,12 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
         {
             strcpy(result,"add_friend_error|用户不存在！");
         }
+        }
+        else
+        {
+            strcpy(result,"add_friend_error|已存在好友！");
+        }
+        
     }
     else{
         strcpy(result,"token_error|token错误，请重新登录！");
@@ -661,6 +672,10 @@ void ServerFunc::confirmFriendRequest(int clientFd,char message[buffSize])
             string nickname=database.query(sql);
             ostr.str("");
             ostr<<"INSERT INTO friend_info (userid,friend_id) VALUES ('"<<uid1<<"','"<<uid<<"')" ;
+            sql=ostr.str();
+            nickname=database.query(sql);
+            ostr.str("");
+            ostr<<"INSERT INTO single_chat_info (member_id1,member_id2) VALUES ('"<<uid1<<"','"<<uid<<"')" ;
             sql=ostr.str();
             nickname=database.query(sql);
             ostr.str("");
