@@ -575,8 +575,8 @@ void ServerFunc::addFriend(int clientFd,char message[buffSize])
         ostringstream ostr;
         ostr<<"SELECT * FROM friend_info WHERE (userid = '"<<uid<<"' AND friend_id = '"<<uid1<<"') OR (userid = '"<<uid1<<"' AND friend_id = '"<<uid<<"')";
         string sql=ostr.str();
-        bool ret1=database.query_sql(sql);
-        if(ret1)
+        string ret1=database.query(sql);
+        if(ret1=="NULL")
         {ostr<<"INSERT INTO friend_apply (object_id,applicant_id,friend_apply_message) VALUES('"<<uid<<"','"<<uid1<<"','"<<request<<"')";
         sql=ostr.str();
         bool ret=database.query_sql(sql);
