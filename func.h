@@ -948,7 +948,7 @@ void ServerFunc::getUnreadMessage(int clientFd,char message[buffSize])
             send(clientFd,&result1,strlen(result1),0);
             cout<<"发送给id="<<clientFd<<" data is :"<<result1<<endl;
         }
-        ostr<<"SELECT COUNT(group_chat_info_id) FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+        ostr<<"SELECT COUNT(temperary_message.group_chat_info_id) FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
         sql=ostr.str();
         ostr.str("");
         countp2p=database.query(sql);
@@ -957,21 +957,21 @@ void ServerFunc::getUnreadMessage(int clientFd,char message[buffSize])
         {
             strcpy(result,"no_unread_message|0");
            send(clientFd,&result,strlen(result),0);
-        cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
+            cout<<"发送给id="<<clientFd<<" data is :"<<result<<endl;
         }
         for(int i=0;i<unreadCount;i++)
         {     
             strcpy(result1,"unread_message|1|");
             
-            ostr<<"SELECT group_chat_info_id FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            ostr<<"SELECT temperary_message.group_chat_info_id FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
             string sql=ostr.str();
             ostr.str("");
             uidd=database.query(sql);
-            ostr<<"SELECT content FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            ostr<<"SELECT temperary_message.content FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
             sql=ostr.str();
             ostr.str("");
             request=database.query(sql);
-            ostr<<"SELECT time FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
+            ostr<<"SELECT temperary_message.time FROM temperary_message ,user, group_chat_info WHERE temperary_message.poster_id = user.userid AND group_chat_info.group_chat_info_id = temperary_message.group_chat_info_id AND recv_id = '"<<uid<<"' ORDER BY temperary_message.time DESC";
             sql=ostr.str();
             ostr.str("");
             string time=database.query(sql);
