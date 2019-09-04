@@ -752,7 +752,7 @@ void ServerFunc::joinGroup(int clientFd,char message[buffSize])
         ostr.str("");
         if(ret)
         {
-            ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_admin = 1 AND group_chat_id = '"<<groupId<<"'";
+            ostr<<"SELECT member_id FROM group_chat_info WHERE group_chat_admin = 1 AND group_chat_info_id = '"<<groupId<<"'";
             sql=ostr.str();
             string adminidstr=database.query(sql);
             int adminid=stoi(adminidstr);
