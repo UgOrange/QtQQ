@@ -69,13 +69,7 @@ int handleRecv(int clientFd)
     {
         int i;
         printf("message is %s\n",bufRecv);
-        for(i=0;i<strlen(bufRecv);i++)
-        {
-        //从客户端发来的字符串中取出消息类型
-            if(bufRecv[i] == '|') break;
-            type[i] = bufRecv[i];
-        }
-        strcpy(message,bufRecv+i+1);
+        sscanf(bufRecv,"%[^|]|%s",type,message);
         cout<<"type is "<<type<<" message is "<<message<<endl;
         if(0==strcmp(type,"register"))
         {
