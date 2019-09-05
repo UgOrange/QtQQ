@@ -380,7 +380,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
                 }
                 else
                 {
-                    
+                     send(iter->second,&result,strlen(result),0);
                     cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
                 }
                 strcpy(result1,"send_message_succ|发送成功！");
