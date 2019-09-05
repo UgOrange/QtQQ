@@ -380,7 +380,7 @@ void ServerFunc::sendMessage(int clientFd,char message[buffSize])
                 }
                 else
                 {
-                    send(iter->second,&result,strlen(result),0);
+                    
                     cout<<"发送给id="<<iter->second<<" data is :"<<result<<endl;
                 }
                 strcpy(result1,"send_message_succ|发送成功！");
@@ -427,7 +427,7 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
             int useruid1;
             ss>>useruid1;      
     cout<<sid<<" "<<answer<<endl;
-    if(useruid==useruid1&&answer==secureAnswer)
+    if(useruid==useruid1&&!strcmp(answer.c_str(),secureAnswer))
     {
         ostr<<"UPDATE user SET password ='"<<passWd<<"' WHERE user_name = '"<<uName<<"'";
         sql=ostr.str();
