@@ -427,6 +427,7 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
             int useruid1;
             ss>>useruid1;      
     cout<<sid<<" "<<answer<<endl;
+    cout<<useruid<<" "<<useruid1<<" "<<answer<<" "<<secureAnswer<<endl;
     if(useruid==useruid1&&!strcmp(answer.c_str(),secureAnswer))
     {
         ostr<<"UPDATE user SET password ='"<<passWd<<"' WHERE user_name = '"<<uName<<"'";
