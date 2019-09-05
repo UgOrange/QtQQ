@@ -425,7 +425,7 @@ void ServerFunc::forgetPassWd(int clientFd,char message[buffSize])
           std::stringstream ss1;
             ss1<<secureId;
             int useruid1;
-            ss>>useruid1;      
+            ss1>>useruid1;      
     cout<<sid<<" "<<answer<<endl;
     cout<<useruid<<" "<<useruid1<<" "<<answer<<" "<<secureAnswer<<endl;
     if(useruid==useruid1&&!strcmp(answer.c_str(),secureAnswer))
